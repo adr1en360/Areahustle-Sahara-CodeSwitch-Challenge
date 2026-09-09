@@ -8,7 +8,7 @@ import { naira } from "@/lib/format";
 import { Wallet, LogOut, Shield, LayoutDashboard, Briefcase, CreditCard, PlusCircle, User as UserIcon } from "lucide-react";
 import { AnimatedNumber } from "./AnimatedNumber";
 import { AuthModal } from "./AuthModal";
-import logo from "@/assets/logo.png"; 
+import logo from "@/assets/logo.png";
 import { toast } from "sonner";
 
 export function Navbar() {
@@ -99,9 +99,11 @@ export function Navbar() {
                   </div>
                 </>
               )}
-              <button onClick={() => logout()} className="text-muted-foreground hover:text-foreground transition">
-                <LogOut className="h-4 w-4" />
-              </button>
+              <Link href="/">
+                <button onClick={() => logout()} className="text-muted-foreground hover:text-foreground transition">
+                  <LogOut className="h-4 w-4" />
+                </button>
+              </Link>
             </div>
           ) : (
             <div className="flex items-center gap-3 sm:gap-4">
