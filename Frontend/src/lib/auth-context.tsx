@@ -1,8 +1,8 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { api } from "./api";
 import { toast } from "sonner";
+import { api } from "./api";
 
 type AuthContextType = {
   isLoggedIn: boolean;
@@ -39,88 +39,121 @@ export type PostedJob = {
   isNew?: boolean;
 };
 
+const defaultUser = {
+  id: 1,
+  email: "demo@areahustle.ng",
+  name: "Demo Hustler",
+  role: "hustler",
+  wallet_balance: 24500,
+  trust_score: 820,
+};
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
-  const [user, setUser] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(!!token);
+  const [user, setUser] = useState<any>(defaultUser);
+  const [isLoading, setIsLoading] = useState(false);
   const [language, setLanguage] = useState("English");
-  const [areas, setAreas] = useState<string[]>([]);
+  const [areas, setAreas] = useState<string[]>(["Lekki Phase 1", "Yaba"]);
   const [voiceOpen, setVoiceOpen] = useState(false);
   const [jobs, setJobs] = useState<PostedJob[]>([]);
 
-  const syncDemoState = (u: any) => {
-    return u;
-  };
+  const syncDemoState = (u: any) => ({ ...defaultUser, ...u });
 
   const refreshUser = async () => {
-    if (token) {
-      try {
-        const u = await api.getMe();
-        setUser(u);
-      } catch (e) {}
+    if (typeof window === "undefined") return;
+    const saved = window.localStorage.getItem("areahustle-demo-user");
+    if (!saved) {
+      setUser(defaultUser);
+      return;
+    }
+    try {
+      setUser(JSON.parse(saved));
+    } catch {
+      setUser(defaultUser);
     }
   };
 
   useEffect(() => {
-    setToken(localStorage.getItem("token"));
-  }, []);
-
-  useEffect(() => {
-    if (token) {
-      setIsLoading(true);
-      api
-        .getMe()
-        .then((u) => {
-          setUser(syncDemoState(u));
-          setIsLoading(false);
-        })
-        .catch(() => {
-          logout();
-          setIsLoading(false);
-        });
-    } else {
-      setIsLoading(false);
+    if (typeof window === "undefined") return;
+    const storedToken = window.localStorage.getItem("token");
+    const storedUser = window.localStorage.getItem("areahustle-demo-user");
+    if (storedToken) setToken(storedToken);
+    if (storedUser) {
+      try {
+        setUser(syncDemoState(JSON.parse(storedUser)));
+      } catch {
+        setUser(defaultUser);
+      }
     }
-  }, [token]);
+  }, []);
 
   useEffect(() => {
-    const handleStorage = () => {
-      setUser((prev: any) => syncDemoState(prev));
-    };
-    window.addEventListener("storage", handleStorage);
-    return () => window.removeEventListener("storage", handleStorage);
-  }, []);
+    if (typeof window === "undefined") return;
+    if (user) window.localStorage.setItem("areahustle-demo-user", JSON.stringify(user));
+  }, [user]);
 
   const login = async (data: any) => {
-    const res = await api.login(data);
-    localStorage.setItem("token", res.access_token);
-    setToken(res.access_token);
-    const u = await api.getMe();
-    setUser(syncDemoState(u));
-    return syncDemoState(u);
+    const role = data?.role ?? (String(data?.username ?? "").includes("customer") ? "customer" : "hustler");
+    const nextUser = syncDemoState({
+      ...defaultUser,
+      role,
+      email: data?.username ?? data?.email ?? defaultUser.email,
+      name: data?.name ?? (data?.username ? data.username.split("@")[0] : defaultUser.name),
+      wallet_balance: role === "customer" ? 60000 : 24500,
+      trust_score: role === "customer" ? 0 : 820,
+    });
+
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("token", "demo-token");
+      window.localStorage.setItem("areahustle-demo-user", JSON.stringify(nextUser));
+    }
+    setToken("demo-token");
+    setUser(nextUser);
+    return nextUser;
   };
 
   const register = async (data: any) => {
-    await api.register(data);
-    return await login({ username: data.email, password: data.password });
+    const role = data?.role ?? "customer";
+    const nextUser = syncDemoState({
+      ...defaultUser,
+      role,
+      email: data?.email ?? defaultUser.email,
+      name: data?.name ?? defaultUser.name,
+      wallet_balance: role === "customer" ? 60000 : 24500,
+      trust_score: role === "customer" ? 0 : 820,
+    });
+
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("token", "demo-token");
+      window.localStorage.setItem("areahustle-demo-user", JSON.stringify(nextUser));
+    }
+    setToken("demo-token");
+    setUser(nextUser);
+    return nextUser;
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem("token");
+      window.localStorage.removeItem("areahustle-demo-user");
+    }
     setToken(null);
     setUser(null);
     toast.info("Logged out successfully");
   };
 
   const updateDemoBalance = async (role: string, amount: number) => {
-    try {
-      await api.updateWallet(amount);
-      await refreshUser();
-    } catch (err: any) {
-      toast.error("Failed to update wallet balance: " + err.message);
-    }
+    setUser((current: any) => {
+      if (!current) return current;
+      const next = {
+        ...current,
+        wallet_balance: Math.max(0, Number(current.wallet_balance ?? 0) + Number(amount ?? 0)),
+      };
+      if (typeof window !== "undefined") window.localStorage.setItem("areahustle-demo-user", JSON.stringify(next));
+      return next;
+    });
   };
 
   const addDemoTransaction = (txn: any) => {
@@ -138,7 +171,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   return (
     <AuthContext.Provider
       value={{
-        isLoggedIn: !!token,
+        isLoggedIn: !!token && !!user,
         isLoading,
         userRole: user?.role || null,
         user,

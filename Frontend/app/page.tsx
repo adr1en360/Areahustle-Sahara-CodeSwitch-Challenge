@@ -203,10 +203,11 @@ export default function LandingClient() {
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-0 py-16">
         <div className="grid lg:grid-cols-2 gap-10 items-center">
           <div className="relative rounded-[2rem] overflow-hidden shadow-elevated aspect-[1/1] sm:aspect-[4/3] lg:aspect-[1/1]">
-            <Image 
-              src={heroHustler} 
-              alt="Professional Nigerian artisan" 
+            <Image
+              src={heroHustler}
+              alt="Professional Nigerian artisan"
               fill
+              sizes="(min-width: 1024px) 50vw, 100vw"
               className="object-cover"
               placeholder="blur"
             />
@@ -250,10 +251,11 @@ export default function LandingClient() {
       {/* STATS / CITY */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
         <div className="relative rounded-[2rem] overflow-hidden shadow-elevated">
-          <Image 
-            src={estate} 
-            alt="Modern Lagos estate" 
+          <Image
+            src={estate}
+            alt="Modern Lagos estate"
             fill
+            sizes="(min-width: 1280px) 1216px, calc(100vw - 2rem)"
             className="object-cover"
             placeholder="blur"
           />
