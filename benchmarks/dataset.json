@@ -1,0 +1,132 @@
+{
+  "metadata": {
+    "language": "pcm",
+    "task": "Nigerian Pidgin-English code-switched artisan dispatch commands (Lagos informal markets)",
+    "audio_format": "16000 Hz, 16-bit PCM, mono WAV, peak-normalized",
+    "target_slots": ["category", "location", "budget_ngn"],
+    "sample_count": 20,
+    "notes": "Source of truth for the ground truth dataset. The Colab notebook (AreaHustle_Benchmark_Colab.ipynb) embeds the same data; if you edit here, mirror the change in the notebook's DATASET cell."
+  },
+  "samples": [
+    {
+      "id": 1,
+      "filename": "sample_01.wav",
+      "transcript": "Abeg I dey Ikeja underbridge now, my brake dey sound, I need mechanic for 5k.",
+      "target": { "category": "Mechanic", "location": "Ikeja underbridge", "budget_ngn": 5000 }
+    },
+    {
+      "id": 2,
+      "filename": "sample_02.wav",
+      "transcript": "My kitchen pipe don burst for Yaba tech side, make plumber come fast fast, I get 4000 naira.",
+      "target": { "category": "Plumber", "location": "Yaba", "budget_ngn": 4000 }
+    },
+    {
+      "id": 3,
+      "filename": "sample_03.wav",
+      "transcript": "I need rewinder wey go check my pumping machine for Bariga, my budget na 6k.",
+      "target": { "category": "Rewinder", "location": "Bariga", "budget_ngn": 6000 }
+    },
+    {
+      "id": 4,
+      "filename": "sample_04.wav",
+      "transcript": "Electrician dey around Surulere? Light full house but my breaker dey trip, I go pay 7500.",
+      "target": { "category": "Electrician", "location": "Surulere", "budget_ngn": 7500 }
+    },
+    {
+      "id": 5,
+      "filename": "sample_05.wav",
+      "transcript": "Who dey do carpentry around Ikorodu garage? My wardrobe door don pull out, 3000 dey ground.",
+      "target": { "category": "Carpenter", "location": "Ikorodu garage", "budget_ngn": 3000 }
+    },
+    {
+      "id": 6,
+      "filename": "sample_06.wav",
+      "transcript": "My generator alternator don burn for Festac first gate, I need rewinder urgently for 8k.",
+      "target": { "category": "Rewinder", "location": "Festac", "budget_ngn": 8000 }
+    },
+    {
+      "id": 7,
+      "filename": "sample_07.wav",
+      "transcript": "Vulcanizer abeg, my tyre puncture for Maryland roundabout, quick assistance for 2000 naira.",
+      "target": { "category": "Vulcanizer", "location": "Maryland roundabout", "budget_ngn": 2000 }
+    },
+    {
+      "id": 8,
+      "filename": "sample_08.wav",
+      "transcript": "I dey Lekki phase 1, AC dey blow hot air, mechanic or AC repairer abeg for 10000 naira.",
+      "target": { "category": "AC repairer", "location": "Lekki phase 1", "budget_ngn": 10000 }
+    },
+    {
+      "id": 9,
+      "filename": "sample_09.wav",
+      "transcript": "Make painter come paint one room for Ogba, paint dey ground already, labor na 5k.",
+      "target": { "category": "Painter", "location": "Ogba", "budget_ngn": 5000 }
+    },
+    {
+      "id": 10,
+      "filename": "sample_10.wav",
+      "transcript": "Panel beater needed for Oshodi bus stop, moto scratch side, I fit pay 12k.",
+      "target": { "category": "Panel beater", "location": "Oshodi bus stop", "budget_ngn": 12000 }
+    },
+    {
+      "id": 11,
+      "filename": "sample_11.wav",
+      "transcript": "Welder dey this area? Iron gate hinge don cut for Ojuelegba, 4500 naira dey.",
+      "target": { "category": "Welder", "location": "Ojuelegba", "budget_ngn": 4500 }
+    },
+    {
+      "id": 12,
+      "filename": "sample_12.wav",
+      "transcript": "Plumber abeg come fix my WC sink for Ilupeju, water dey leak everywhere, I get 5000.",
+      "target": { "category": "Plumber", "location": "Ilupeju", "budget_ngn": 5000 }
+    },
+    {
+      "id": 13,
+      "filename": "sample_13.wav",
+      "transcript": "Generator rewinder needed for Victoria Island, starter coil don bad, 15k available.",
+      "target": { "category": "Rewinder", "location": "Victoria Island", "budget_ngn": 15000 }
+    },
+    {
+      "id": 14,
+      "filename": "sample_14.wav",
+      "transcript": "My ceiling fan motor dey make heavy noise for Mushin, electrician abeg, 3500.",
+      "target": { "category": "Electrician", "location": "Mushin", "budget_ngn": 3500 }
+    },
+    {
+      "id": 15,
+      "filename": "sample_15.wav",
+      "transcript": "I need bricklayer to patch small soakaway crack for Agege, I go pay 6000 naira.",
+      "target": { "category": "Bricklayer", "location": "Agege", "budget_ngn": 6000 }
+    },
+    {
+      "id": 16,
+      "filename": "sample_16.wav",
+      "transcript": "Car no wan start for Gbagada expressway, mechanic come with jumper wire, 4k dey.",
+      "target": { "category": "Mechanic", "location": "Gbagada expressway", "budget_ngn": 4000 }
+    },
+    {
+      "id": 17,
+      "filename": "sample_17.wav",
+      "transcript": "Carpenter needed to fix four office chairs for Marina Lagos island, budget na 8000.",
+      "target": { "category": "Carpenter", "location": "Marina", "budget_ngn": 8000 }
+    },
+    {
+      "id": 18,
+      "filename": "sample_18.wav",
+      "transcript": "Roofer abeg come check my leaking zinc roof for Ketu, rain dey enter parlour, I get 9000.",
+      "target": { "category": "Roofer", "location": "Ketu", "budget_ngn": 9000 }
+    },
+    {
+      "id": 19,
+      "filename": "sample_19.wav",
+      "transcript": "Make tailor come sew five school uniform for Egbeda, material don buy already, na 7000 I go pay.",
+      "target": { "category": "Tailor", "location": "Egbeda", "budget_ngn": 7000 }
+    },
+    {
+      "id": 20,
+      "filename": "sample_20.wav",
+      "transcript": "Fridge repairer needed for Berger, my freezer no dey freeze again, 11000 dey ground.",
+      "target": { "category": "Fridge repairer", "location": "Berger", "budget_ngn": 11000 }
+    }
+  ]
+}
