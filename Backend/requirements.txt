@@ -7,3 +7,6 @@ pyjwt
 twilio
 python-dotenv
 email-validator
+pymongo
+requests
+httpx
