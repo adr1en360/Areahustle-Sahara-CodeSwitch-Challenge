@@ -72,7 +72,7 @@ AreaHustle decouples high-friction human voice capture from rigid relational mar
   - `ha`: Hausa / Hausa-English CodeSwitch
 
 ### Audio Pipeline & Format Handling (`sahara_client.py`)
-Because the Intron Sahara Voice API natively supports `webm`, `wav`, `ogg`, `mp4`, and `m4a`, incoming audio from mobile browser `MediaRecorder` instances can be sent directly to Sahara. `pydub` transcoding to WAV is maintained as a fallback for non-standard streams. Full technical details are recorded in [`docs/SAHARA_API_REFERENCE.md`](file:///c:/Users/DELL/Documents/Areahustle-Sahara-CodeSwitch-Challenge/docs/SAHARA_API_REFERENCE.md).
+Because the Intron Sahara Voice API natively supports `webm`, `wav`, `ogg`, `mp4`, and `m4a`, incoming audio from mobile browser `MediaRecorder` instances can be sent directly to Sahara. `pydub` transcoding to WAV is maintained as a fallback for non-standard streams. Full technical details are recorded in [`docs/SAHARA_API_REFERENCE.md`](SAHARA_API_REFERENCE.md).
 
 ---
 
@@ -96,11 +96,11 @@ class TaskIntent(BaseModel):
 ### Schema: `SearchIntent` (for Job Discovery)
 ```python
 class SearchIntent(BaseModel):
-    category: Optional[str] = Field(None, description="Job category being searched for")
-    location: Optional[str] = Field(None, description="Neighborhood or area in Lagos")
-    budget_min: Optional[float] = Field(None, description="Minimum payout requested")
-    budget_max: Optional[float] = Field(None, description="Maximum payout mentioned")
-    keyword: Optional[str] = Field(None, description="Key search terms")
+    category: str = Field(description="Job category to filter by, empty string if not mentioned")
+    location: str = Field(description="Neighbourhood or area to filter by, empty string if not mentioned")
+    budget_min: float = Field(description="Minimum acceptable budget in Naira, 0 if not mentioned")
+    budget_max: float = Field(description="Maximum acceptable budget in Naira, 0 if not mentioned")
+    keyword: str = Field(description="Single keyword to match against job titles/descriptions, empty string if not applicable")
 ```
 
 ---
@@ -120,23 +120,20 @@ Accepts a recorded audio file, executes Sahara STT, then passes transcript to Ge
 - **Success Response** (`200 OK`):
 ```json
 {
-  "status": "success",
-  "language": "pcm",
   "transcript": "Abeg I need person wey go service my generator for Lekki Phase 1, budget na 10k naira.",
   "entities": {
     "title": "Generator Servicing",
+    "description": "Customer needs a technician to service a generator in Lekki Phase 1 for ₦10,000.",
     "category": "Repairs",
     "budget": 10000.0,
-    "neighbourhood": "Lekki Phase 1",
-    "description": "Customer needs a technician to service a generator in Lekki Phase 1 for ₦10,000."
+    "neighbourhood": "Lekki Phase 1"
   }
 }
 ```
 
-- **Error Response** (`400 / 500`):
+- **Error Response** (`400` no/empty audio file · `502` Sahara or Gemini failure):
 ```json
 {
-  "status": "error",
   "detail": "Sahara STT failed: Invalid API key or audio file corrupted."
 }
 ```
@@ -156,14 +153,14 @@ Accepts an audio query spoken by a hustler, extracts search criteria, and return
 - **Success Response** (`200 OK`):
 ```json
 {
-  "status": "success",
   "transcript": "Show me any generator work around Lekki.",
   "filters": {
     "category": "Repairs",
     "location": "Lekki Phase 1",
+    "budget_min": 0,
+    "budget_max": 0,
     "keyword": "generator"
   },
-  "count": 2,
   "jobs": [
     {
       "id": "66e4a8b2...",

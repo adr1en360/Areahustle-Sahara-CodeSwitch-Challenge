@@ -44,15 +44,13 @@ Call this when a customer finishes recording their voice request on `/Post-Task`
 #### Expected Response (`200 OK`)
 ```json
 {
-  "status": "success",
-  "language": "pcm",
   "transcript": "I need someone to come service my generator in Lekki Phase 1, budget is 10 thousand naira.",
   "entities": {
     "title": "Generator Servicing",
+    "description": "Customer needs a technician to service a generator in Lekki Phase 1 for ₦10,000.",
     "category": "Repairs",
     "budget": 10000.0,
-    "neighbourhood": "Lekki Phase 1",
-    "description": "Customer needs a technician to service a generator in Lekki Phase 1 for ₦10,000."
+    "neighbourhood": "Lekki Phase 1"
   }
 }
 ```
@@ -82,14 +80,14 @@ Call this when a hustler taps the floating microphone on the `/Jobs` marketplace
 #### Expected Response (`200 OK`)
 ```json
 {
-  "status": "success",
   "transcript": "Show me generator work in Lekki.",
   "filters": {
     "category": "Repairs",
     "location": "Lekki Phase 1",
+    "budget_min": 0,
+    "budget_max": 0,
     "keyword": "generator"
   },
-  "count": 2,
   "jobs": [
     {
       "id": "66e4a8b2...",
@@ -102,6 +100,7 @@ Call this when a hustler taps the floating microphone on the `/Jobs` marketplace
   ]
 }
 ```
+(`jobs.length` gives you the result count; `budget_min`/`budget_max` are `0` when the speaker didn't mention a budget range.)
 
 #### What the Frontend Needs To Do:
 1. Update the job feed state with `response.jobs`.
