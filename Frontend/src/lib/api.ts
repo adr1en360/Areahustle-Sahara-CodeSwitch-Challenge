@@ -17,7 +17,7 @@ const demoUser: DemoUser = {
 };
 
 const wait = () => new Promise((resolve) => setTimeout(resolve, 150));
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://areahustle-backend.onrender.com";
+const API_BASE = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000").replace(/\/$/, "");
 
 const defaultJobs = [
   {
@@ -134,6 +134,46 @@ const normalizeJob = (job: any) => ({
   status: job.status ?? "open",
   budget: Number(job.budget ?? 0),
 });
+
+export const voiceApi = {
+  async transcribeVoiceTask(audioBlob: Blob, lang: string = "pcm") {
+    const formData = new FormData();
+    const ext = audioBlob.type?.includes("webm") ? "webm" : audioBlob.type?.includes("ogg") ? "ogg" : "wav";
+    formData.append("file", audioBlob, `speech.${ext}`);
+    formData.append("lang", lang || "pcm");
+
+    const response = await fetch(`${API_BASE}/api/voice/transcribe`, {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.detail || "Voice transcription failed.");
+    }
+
+    return await response.json();
+  },
+
+  async voiceSearchJobs(audioBlob: Blob, lang: string = "pcm") {
+    const formData = new FormData();
+    const ext = audioBlob.type?.includes("webm") ? "webm" : audioBlob.type?.includes("ogg") ? "ogg" : "wav";
+    formData.append("file", audioBlob, `query.${ext}`);
+    formData.append("lang", lang || "pcm");
+
+    const response = await fetch(`${API_BASE}/api/voice/search`, {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.detail || "Voice search failed.");
+    }
+
+    return await response.json();
+  },
+};
 
 export const api = {
   login: async (data: any) =>
@@ -385,7 +425,10 @@ export const api = {
   },
 
   voiceToIntentUpload: async (formData?: FormData) => {
-    if (!formData) {
+    const file = formData?.get("file");
+    const lang = (formData?.get("lang") as string | null) || "pcm";
+
+    if (!file || !(file instanceof Blob)) {
       return {
         category: "General",
         description: "Need a reliable helper for a quick errand and setup in Lekki Phase 1.",
@@ -395,15 +438,7 @@ export const api = {
     }
 
     try {
-      const file = formData.get("file");
-      const payload = new FormData();
-      if (file) payload.append("file", file);
-
-      const result = await requestJson("/api/tasks/voice-intent", {
-        method: "POST",
-        body: payload,
-      });
-
+      const result = await voiceApi.transcribeVoiceTask(file as Blob, lang);
       if (result?.entities) return result.entities;
       if (result?.category || result?.description || result?.budget || result?.neighbourhood) return result;
       return {

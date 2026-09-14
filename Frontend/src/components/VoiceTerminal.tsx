@@ -100,7 +100,7 @@ export function VoiceTerminal() {
             </button>
 
             <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-voice font-semibold mb-2">
-              <Sparkles className="h-3 w-3" /> Aethex · Task Terminal
+              <Sparkles className="h-3 w-3" /> Sahara Voice · Task Terminal
             </div>
             <h3 className="font-display text-2xl font-bold mb-1">
               {phase === "listening" && "Listening…"}

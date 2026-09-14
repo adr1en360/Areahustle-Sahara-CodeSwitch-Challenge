@@ -2,18 +2,20 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useAuth } from "@/lib/auth-context";
-import { api } from "@/lib/api";
+import { api, voiceApi } from "@/lib/api";
 import { naira } from "@/lib/format";
-import { Mic, Lock, MapPin, Tag, Wallet, Sparkles, Check, Keyboard } from "lucide-react";
+import { Mic, Lock, MapPin, Tag, Wallet, Sparkles, Check, Keyboard, Languages } from "lucide-react";
 import { toast } from "sonner";
 
 type Phase = "idle" | "recording" | "processing" | "result" | "locked";
+type VoiceLanguage = "pcm" | "yo";
 
 export default function PostTask() {
   const { isLoggedIn } = useAuth();
   const [phase, setPhase] = useState<Phase>("idle");
   const [manualMode, setManualMode] = useState(false);
   const [voiceResult, setVoiceResult] = useState<any>(null);
+  const [voiceLanguage, setVoiceLanguage] = useState<VoiceLanguage>("pcm");
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -49,27 +51,24 @@ export default function PostTask() {
       mr.onstop = async () => {
         setPhase("processing");
         const mimeType = mr.mimeType || "audio/webm";
-        const ext = mimeType.includes("webm") ? "webm" : mimeType.includes("ogg") ? "ogg" : "wav";
         const audioBlob = new Blob(chunksRef.current, { type: mimeType });
 
-        const formData = new FormData();
-        formData.append("file", audioBlob, `voice.${ext}`);
-
         try {
-          const result = (await api.voiceToIntentUpload(formData)) as any;
+          const result = await voiceApi.transcribeVoiceTask(audioBlob, voiceLanguage);
           const entities = result?.entities ?? result ?? {};
-          setVoiceResult(entities);
+          setVoiceResult(result);
 
-          setTitle(entities.category || "");
+          setTitle(entities.title || entities.category || "");
           setDescription(entities.description || "");
           setBudget(entities.budget ? String(entities.budget) : "");
-          setArea(entities.neighbourhood || "");
+          setArea(entities.neighbourhood || entities.location || "");
 
-          toast.success("Speech structured! Review fields below.");
-          setPhase("idle");
+          toast.success("Sahara Voice captured your request. Review and confirm below.");
+          setPhase("result");
           setManualMode(true);
         } catch (err: any) {
-          toast.error(err.message || "Failed to parse intent. Please try typing manually.");
+          const message = err?.message || "Could not clearly catch that. Please speak closer to the mic or try again.";
+          toast.error(message.includes("clearly") ? message : "Could not clearly catch that. Please speak closer to the mic or try again.");
           setPhase("idle");
         }
 
@@ -106,9 +105,30 @@ export default function PostTask() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-14 sm:py-20">
       <div className="text-center mb-10">
-        <div className="text-xs uppercase tracking-widest text-voice font-semibold mb-3">Task Terminal</div>
+        <div className="text-xs uppercase tracking-widest text-voice font-semibold mb-3">Sahara Voice</div>
         <h1 className="font-display text-4xl sm:text-5xl font-bold tracking-tight">Speak your task.</h1>
-        <p className="text-muted-foreground mt-3 max-w-md mx-auto">Aethex listens. Gemini structures. Lock escrow when it looks right.</p>
+        <p className="text-muted-foreground mt-3 max-w-md mx-auto">Sahara listens. Gemini structures. Lock escrow when it looks right.</p>
+      </div>
+
+      <div className="mb-6 flex items-center justify-center">
+        <div className="inline-flex items-center gap-2 rounded-full border bg-card p-1 shadow-sm">
+          {[
+            { value: "pcm", label: "🇳🇬 Pidgin (Default)" },
+            { value: "yo", label: "🇳🇬 Yoruba-English" },
+          ].map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              onClick={() => setVoiceLanguage(option.value as VoiceLanguage)}
+              className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition ${
+                voiceLanguage === option.value ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <Languages className="h-3.5 w-3.5" />
+              {option.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="rounded-3xl bg-card border shadow-elevated p-8 sm:p-12">
@@ -209,7 +229,7 @@ export default function PostTask() {
               </div>
               <div className="text-sm text-muted-foreground mt-1 max-w-sm">
                 {phase === "idle" && 'Try: "I need someone to service my generator in Lekki for ₦8,000".'}
-                {phase === "recording" && "Aethex Speech-to-Text active"}
+                {phase === "recording" && "Sahara Voice Speech-to-Text active"}
                 {phase === "processing" && "Gemini structuring fields"}
                 {phase === "result" && "Review and lock escrow to publish to nearby hustlers."}
                 {phase === "locked" && "Hustlers in your area have been notified."}
@@ -240,28 +260,37 @@ export default function PostTask() {
                     <Sparkles className="h-3.5 w-3.5 text-voice" /> Structured by Gemini
                   </div>
                   <div className="grid sm:grid-cols-3 gap-4">
-                    <Field icon={Tag} label="Category" value={voiceResult?.category || "Repairs"} />
-                    <Field icon={Wallet} label="Budget" value={naira(voiceResult?.budget || 8000)} />
-                    <Field icon={MapPin} label="Location" value={voiceResult?.neighbourhood || "Lekki Phase 1"} />
+                    <Field icon={Tag} label="Category" value={voiceResult?.entities?.category || voiceResult?.category || "Repairs"} />
+                    <Field icon={Wallet} label="Budget" value={naira(Number(voiceResult?.entities?.budget ?? voiceResult?.budget ?? 8000))} />
+                    <Field icon={MapPin} label="Location" value={voiceResult?.entities?.neighbourhood || voiceResult?.neighbourhood || "Lekki Phase 1"} />
                   </div>
                   <div className="mt-5 rounded-xl bg-card border p-4 text-sm text-muted-foreground italic">
                     "
-                    {voiceResult?.description ||
+                    {voiceResult?.entities?.description ||
+                      voiceResult?.description ||
                       "I need someone to come service my Tiger generator today in Lekki Phase 1, budget around eight thousand naira."}
                     "
+                  </div>
+                </div>
+                <div className="mt-5 flex items-center justify-center">
+                  <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
+                    <Lock className="h-3.5 w-3.5" />
+                    Escrow secured until the job is completed
                   </div>
                 </div>
                 <button
                   onClick={async () => {
                     setPhase("locked");
                     await createTask({
-                      title: voiceResult?.category || "Generator Servicing",
+                      title: voiceResult?.entities?.title || voiceResult?.title || voiceResult?.category || title || "Generator Servicing",
                       description:
+                        voiceResult?.entities?.description ||
                         voiceResult?.description ||
+                        description ||
                         "I need someone to come service my Tiger generator today in Lekki Phase 1, budget around eight thousand naira.",
-                      budget: voiceResult?.budget || 8000,
-                      neighbourhood: voiceResult?.neighbourhood || "Lekki Phase 1",
-                      category: voiceResult?.category || "Repairs",
+                      budget: Number((voiceResult?.entities?.budget ?? voiceResult?.budget ?? budget) || 8000),
+                      neighbourhood: voiceResult?.entities?.neighbourhood || voiceResult?.neighbourhood || area || "Lekki Phase 1",
+                      category: voiceResult?.entities?.category || voiceResult?.category || "Repairs",
                     });
                   }}
                   disabled={phase === "locked"}
