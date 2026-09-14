@@ -1,4 +1,6 @@
+import os
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -13,6 +15,27 @@ except ImportError:
     from agents import test_call, watch_call
 
 app = FastAPI(title="AreaHustle Fintech API")
+
+allowed_origins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "https://areahustle-backend.onrender.com",
+]
+
+# Allow extra origins configured for deployed frontend hosts.
+configured_origins = os.getenv("CORS_ALLOWED_ORIGINS", "")
+if configured_origins:
+    allowed_origins.extend(
+        origin.strip() for origin in configured_origins.split(",") if origin.strip()
+    )
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=allowed_origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
 app.include_router(users.router, prefix="/api/users", tags=["Users"])
