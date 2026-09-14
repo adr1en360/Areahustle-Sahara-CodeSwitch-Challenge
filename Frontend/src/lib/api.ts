@@ -17,7 +17,7 @@ const demoUser: DemoUser = {
 };
 
 const wait = () => new Promise((resolve) => setTimeout(resolve, 150));
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8001";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://areahustle-backend.onrender.com";
 
 const defaultJobs = [
   {
@@ -359,17 +359,14 @@ export const api = {
   }),
 
   getTransactions: async (userId = "demo") =>
-    withFallback(
-      async () => {
-        const result = await requestJson(`/api/transactions/user/${userId}`);
-        return Array.isArray(result) ? result : [];
-      },
-      [
-        { id: 1, type: "deposit", amount: 15000, date: "Today", desc: "Wallet top-up", location: "Lagos" },
-        { id: 2, type: "payment", amount: -3200, date: "Yesterday", desc: "Generator repair payout", location: "Lekki" },
-        { id: 3, type: "deposit", amount: 6000, date: "2 days ago", desc: "Task payout", location: "Yaba" },
-      ],
-    ),
+    withFallback(async () => {
+      const result = await requestJson(`/api/transactions/user/${userId}`);
+      return Array.isArray(result) ? result : [];
+    }, [
+      { id: 1, type: "deposit", amount: 15000, date: "Today", desc: "Wallet top-up", location: "Lagos" },
+      { id: 2, type: "payment", amount: -3200, date: "Yesterday", desc: "Generator repair payout", location: "Lekki" },
+      { id: 3, type: "deposit", amount: 6000, date: "2 days ago", desc: "Task payout", location: "Yaba" },
+    ]),
 
   createHustlerProfile: async (data: any) => {
     await wait();
