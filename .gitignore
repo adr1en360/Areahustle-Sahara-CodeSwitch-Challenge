@@ -15,3 +15,5 @@ build/
 benchmarks/*.zip
 benchmarks/transcripts_cache.json
 benchmarks/colab_transcripts.json
+benchmarks/audio/
+benchmarks/audio.zip
