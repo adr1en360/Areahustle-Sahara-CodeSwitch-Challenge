@@ -10,3 +10,8 @@ node_modules/
 dist/
 build/
 .DS_Store
+
+# Benchmarks artifacts
+benchmarks/*.zip
+benchmarks/transcripts_cache.json
+benchmarks/colab_transcripts.json

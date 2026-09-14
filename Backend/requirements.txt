@@ -11,3 +11,5 @@ pymongo
 requests
 httpx
 python-multipart
+google-genai
+pydub

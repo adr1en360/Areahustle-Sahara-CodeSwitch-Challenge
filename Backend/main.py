@@ -8,11 +8,9 @@ BASE_DIR = Path(__file__).resolve().parent
 load_dotenv(BASE_DIR / ".env")
 
 try:
-    from .routes import auth, passport, tasks, transactions, users
-    from .agents import test_call, watch_call
+    from .routes import auth, passport, tasks, transactions, users, voice
 except ImportError:
-    from routes import auth, passport, tasks, transactions, users
-    from agents import test_call, watch_call
+    from routes import auth, passport, tasks, transactions, users, voice
 
 app = FastAPI(title="AreaHustle Fintech API")
 
@@ -42,8 +40,12 @@ app.include_router(users.router, prefix="/api/users", tags=["Users"])
 app.include_router(passport.router, prefix="/api/passport", tags=["Passport"])
 app.include_router(tasks.router, prefix="/api", tags=["Tasks"])
 app.include_router(transactions.router, prefix="/api/transactions", tags=["Transactions"])
-app.include_router(watch_call.router, prefix="/api/voice", tags=["Voice Webhooks"])
-app.include_router(test_call.router, prefix="/api/voice", tags=["Voice Webhooks"])
+app.include_router(voice.router, prefix="/api/voice", tags=["Voice Pipeline"])
+
+# Telephony webhooks (Twilio) are disabled for the hackathon submission.
+# Code kept in agents/test_call.py and agents/watch_call.py for reference.
+# app.include_router(watch_call.router, prefix="/api/voice", tags=["Voice Webhooks"])
+# app.include_router(test_call.router, prefix="/api/voice", tags=["Voice Webhooks"])
 
 @app.get("/")
 async def root():
