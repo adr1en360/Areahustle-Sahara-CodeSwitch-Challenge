@@ -251,13 +251,13 @@ export default function PassportPage() {
         </div>
       </div>
 
-      {/* Aethex Voice-Assisted Financial Passport FAB */}
+      {/* Sahara Voice-Assisted Financial Passport FAB */}
       <div className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-50 flex flex-col items-end">
         {voiceExpanded && (
           <div className="mb-4 w-72 sm:w-80 bg-white rounded-3xl shadow-elevated border border-gray-100 p-6 animate-fade-up origin-bottom-right">
             <div className="flex justify-between items-start mb-4">
               <div className="text-xs font-bold uppercase tracking-widest text-[#4F46E5] flex items-center gap-1.5">
-                <Mic className="h-3 w-3 animate-pulse" /> Aethex Listening
+                <Mic className="h-3 w-3 animate-pulse" /> Sahara Listening
               </div>
               <button onClick={() => setVoiceExpanded(false)} className="text-gray-400 hover:text-gray-700">
                 <X className="h-4 w-4" />
@@ -292,7 +292,7 @@ export default function PassportPage() {
               <span className="absolute inset-0 rounded-full bg-white/20 animate-ping" style={{ animationDuration: "3s" }}></span>
             </div>
             <span className="font-semibold text-sm max-w-0 overflow-hidden opacity-0 group-hover:max-w-xs group-hover:opacity-100 transition-all duration-500 ease-in-out whitespace-nowrap">
-              Ask Aethex...
+              Ask Sahara...
             </span>
           </button>
         )}

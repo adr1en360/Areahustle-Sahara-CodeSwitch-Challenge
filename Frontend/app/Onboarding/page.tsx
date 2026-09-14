@@ -72,7 +72,7 @@ function Onboarding() {
           <>
             <div className="text-xs uppercase tracking-widest text-muted-foreground mb-2">Step 1 of 2</div>
             <h1 className="font-display text-3xl sm:text-4xl font-bold mb-2">Choose your voice.</h1>
-            <p className="text-muted-foreground mb-8">Aethex will speak and listen in your preferred language.</p>
+            <p className="text-muted-foreground mb-8">Sahara Voice will speak and listen in your preferred language.</p>
             <div className="space-y-3">
               {LANGS.map((l) => {
                 const active = language === l.id;

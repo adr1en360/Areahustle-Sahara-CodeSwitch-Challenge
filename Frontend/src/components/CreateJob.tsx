@@ -22,7 +22,7 @@ export function CreateJob({ existingJob = null }: { existingJob?: any }) {
   const handleVoicePost = () => {
     if (isRecording) {
       setIsRecording(false);
-      console.log("Stopped recording. Sending to Aethex/Gemini 1.5 Flash for structured extraction...");
+      console.log("Stopped recording. Sending to Sahara Voice with the STT + Gemini extraction pipeline...");
       // MOCK: Simulate Gemini extracting structured data
       setTimeout(() => {
         setTaskData({

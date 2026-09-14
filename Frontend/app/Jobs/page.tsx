@@ -1,8 +1,8 @@
 ﻿"use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useAuth } from "@/lib/auth-context";
-import { api } from "@/lib/api";
+import { api, voiceApi } from "@/lib/api";
 import { naira } from "@/lib/format";
 import { MapPin, Lock, Phone, CheckCircle, Search, Mic, X } from "lucide-react";
 import { toast } from "sonner";
@@ -20,6 +20,10 @@ function Jobs() {
   const [myGigs, setMyGigs] = useState<any[]>([]);
   const [loadingMarket, setLoadingMarket] = useState(false);
   const [isActionLoading, setIsActionLoading] = useState<string | null>(null);
+  const [voiceFilter, setVoiceFilter] = useState<{ label: string; location: string; keyword: string } | null>(null);
+  const [isVoiceSearching, setIsVoiceSearching] = useState(false);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
 
   useEffect(() => {
     if (authLoading) return;
@@ -110,6 +114,68 @@ function Jobs() {
     }
   };
 
+  const startVoiceSearch = async () => {
+    chunksRef.current = [];
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mr = new MediaRecorder(stream);
+      mediaRecorderRef.current = mr;
+
+      mr.ondataavailable = (e) => {
+        if (e.data.size > 0) chunksRef.current.push(e.data);
+      };
+
+      mr.onstop = async () => {
+        setIsVoiceSearching(true);
+        const mimeType = mr.mimeType || "audio/webm";
+        const audioBlob = new Blob(chunksRef.current, { type: mimeType });
+
+        try {
+          const result = await voiceApi.voiceSearchJobs(audioBlob, "pcm");
+          const jobs = Array.isArray(result?.jobs) ? result.jobs : [];
+          if (jobs.length > 0) {
+            setMarketJobs(jobs);
+          }
+
+          const filters = result?.filters ?? {};
+          const nextKeyword = String(filters.keyword || keyword || "");
+          const nextLocation = String(filters.location || location || "");
+          setKeyword(nextKeyword);
+          setLocation(nextLocation);
+          setVoiceFilter(
+            nextKeyword || nextLocation
+              ? {
+                  label: nextKeyword || "any work",
+                  location: nextLocation,
+                  keyword: nextKeyword,
+                }
+              : null,
+          );
+          toast.success(`Voice search matched ${jobs.length || 0} jobs.`);
+        } catch (err: any) {
+          const message = err?.message || "Could not clearly catch that. Please speak closer to the mic or try again.";
+          toast.error(message.includes("clearly") ? message : "Could not clearly catch that. Please speak closer to the mic or try again.");
+        } finally {
+          setIsVoiceSearching(false);
+          stream.getTracks().forEach((track) => track.stop());
+        }
+      };
+
+      mr.start();
+      setIsVoiceSearching(true);
+      toast.info("Listening for your job search…");
+    } catch {
+      toast.error("Microphone access denied or not supported.");
+      setIsVoiceSearching(false);
+    }
+  };
+
+  const stopVoiceSearch = () => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state === "recording") {
+      mediaRecorderRef.current.stop();
+    }
+  };
+
   const filteredMarket = marketJobs.filter((j) => {
     const matchKeyword = keyword
       ? (j.title?.toLowerCase().includes(keyword.toLowerCase()) || j.category?.toLowerCase().includes(keyword.toLowerCase()))
@@ -143,7 +209,7 @@ function Jobs() {
 
       {tab === "market" && (
         <>
-          <div className="flex flex-col sm:flex-row gap-4 mb-8 bg-card p-4 rounded-3xl shadow-soft border">
+          <div className="flex flex-col sm:flex-row gap-4 mb-4 bg-card p-4 rounded-3xl shadow-soft border">
             <div className="flex-1 flex items-center gap-2 rounded-2xl border bg-background px-4 py-3 focus-within:border-primary transition">
               <Search className="h-5 w-5 text-muted-foreground" />
               <input
@@ -166,6 +232,25 @@ function Jobs() {
               <option value="Ajah">Ajah</option>
             </select>
           </div>
+
+          {voiceFilter && (
+            <div className="mb-6 flex flex-wrap items-center gap-2">
+              <span className="rounded-full bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary">
+                Filtered by Voice: &quot;{voiceFilter.keyword || voiceFilter.label}&quot; in {voiceFilter.location || "all areas"}
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  setVoiceFilter(null);
+                  setKeyword("");
+                  setLocation("");
+                }}
+                className="rounded-full border px-3 py-1.5 text-xs font-semibold hover:bg-muted transition"
+              >
+                Clear
+              </button>
+            </div>
+          )}
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {filteredMarket.length === 0 && (
@@ -388,10 +473,17 @@ function Jobs() {
       )}
 
       <button
-        onClick={() => toast.info("Listening for query...", { description: "Speak now to search or ask about a job." })}
-        className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-40 bg-voice text-voice-foreground p-4 rounded-full shadow-elevated hover:scale-105 transition"
+        onClick={() => {
+          if (isVoiceSearching) {
+            stopVoiceSearch();
+            return;
+          }
+          void startVoiceSearch();
+        }}
+        className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-40 bg-voice text-voice-foreground p-4 rounded-full shadow-elevated hover:scale-105 transition disabled:opacity-80"
+        aria-label="Search jobs by voice"
       >
-        <Mic className="h-6 w-6" />
+        <Mic className={`h-6 w-6 ${isVoiceSearching ? "animate-pulse" : ""}`} />
       </button>
     </div>
   );
