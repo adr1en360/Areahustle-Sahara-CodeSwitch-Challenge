@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from backend.routes import auth, users
+from routes import auth, users
 
 app = FastAPI(title="AreaHustle Fintech API")
 

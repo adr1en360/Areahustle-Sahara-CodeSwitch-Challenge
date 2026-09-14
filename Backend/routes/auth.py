@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel, EmailStr
 from passlib.context import CryptContext
-from backend.database import db
+from database import db
 from datetime import datetime
 
 router = APIRouter()
@@ -10,7 +10,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 class UserSignup(BaseModel):
     email: EmailStr
     password: str
-    role: str  # 'hustler' or 'client'
+    role: str
 
 class UserLogin(BaseModel):
     email: EmailStr

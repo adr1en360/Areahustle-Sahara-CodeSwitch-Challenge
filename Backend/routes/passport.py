@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, UploadFile, File, Form
-from backend.database import db
+from database import db
 from bson import ObjectId
 
 router = APIRouter()
@@ -12,9 +12,7 @@ async def verify_identity(
     id_document: UploadFile = File(None)
 ):
     try:
-        # Save file metadata or handle document storage as needed
         file_name = id_document.filename if id_document else None
-        
         verification_data = {
             "identity_type": identity_type,
             "document_number": document_number,
@@ -22,7 +20,6 @@ async def verify_identity(
             "kyc_status": "pending_verification"
         }
         
-        # Update user profile in MongoDB with KYC status
         result = await db.users.update_one(
             {"_id": ObjectId(user_id)}, 
             {"$set": verification_data}
