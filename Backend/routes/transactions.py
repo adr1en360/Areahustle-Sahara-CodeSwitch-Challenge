@@ -1,7 +1,8 @@
 from fastapi import APIRouter, HTTPException, BackgroundTasks
 from pydantic import BaseModel
-from backend.database import supabase
+from backend.database import db
 from backend.agents.hustler_notifier import send_sms_alert
+from bson import ObjectId
 
 router = APIRouter()
 
@@ -11,14 +12,13 @@ class EscrowRequest(BaseModel):
     hustler_id: str
     amount: float
     action: str
-    currency: str = "NGN" # Added currency to support SMS formatting
+    currency: str = "NGN"
 
-def fetch_phone_and_notify(user_id: str, message: str):
-    """Helper function to fetch the user's phone number and trigger the SMS."""
+async def fetch_phone_and_notify(user_id: str, message: str):
+    """Helper function to fetch the user's phone number from MongoDB and trigger SMS."""
     try:
-        # Assuming your users table is named 'profiles' and has a 'phone_number' column
-        profile = supabase.table("profiles").select("phone_number").eq("user_id", user_id).single().execute()
-        phone_number = profile.data.get("phone_number") if profile.data else None
+        user = await db.users.find_one({"_id": ObjectId(user_id)})
+        phone_number = user.get("phone_number") if user else None
         
         if phone_number:
             send_sms_alert(to_phone=phone_number, message=message)
@@ -31,13 +31,7 @@ def fetch_phone_and_notify(user_id: str, message: str):
 async def process_escrow_intent(req: EscrowRequest, background_tasks: BackgroundTasks):
     if req.action == "release_escrow":
         try:
-            res = supabase.rpc('release_escrow_funds', {
-                'p_gig_id': req.gig_id,
-                'p_hustler_id': req.hustler_id,
-                'p_amount': req.amount
-            }).execute()
-            
-            # 1. Trigger outbound SMS notification to the hustler as a background task
+            # Update escrow/transaction state in MongoDB collection here if needed
             alert_msg = f"Alert: {req.amount} {req.currency} has been released from escrow for gig {req.gig_id}."
             background_tasks.add_task(fetch_phone_and_notify, req.hustler_id, alert_msg)
             
@@ -46,7 +40,6 @@ async def process_escrow_intent(req: EscrowRequest, background_tasks: Background
             raise HTTPException(status_code=400, detail=str(e))
             
     elif req.action == "match_gig":
-        # 2. Trigger outbound SMS notification for locked funds
         match_msg = f"Success: Gig {req.gig_id} matched! {req.amount} {req.currency} is now securely locked in escrow."
         background_tasks.add_task(fetch_phone_and_notify, req.hustler_id, match_msg)
         

@@ -1,37 +1,38 @@
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
-from backend.database import supabase
-from backend.routes.users import get_current_user
+from fastapi import APIRouter, HTTPException, UploadFile, File, Form
+from backend.database import db
+from bson import ObjectId
 
 router = APIRouter()
 
-@router.post("/verify")
+@router.post("/verify/{user_id}")
 async def verify_identity(
+    user_id: str,
     identity_type: str = Form(...),
     document_number: str = Form(...),
-    id_document: UploadFile = File(None),
-    current_user = Depends(get_current_user)
+    id_document: UploadFile = File(None)
 ):
-    user_id = current_user.user.id
-
     try:
-        # If a document is uploaded, save it to a secure Supabase storage bucket
-        document_url = None
-        if id_document:
-            file_path = f"kyc_docs/{user_id}_{id_document.filename}"
-            supabase.storage.from_("secure-documents").upload(file_path, await id_document.read())
-            document_url = supabase.storage.from_("secure-documents").get_public_url(file_path)
-
+        # Save file metadata or handle document storage as needed
+        file_name = id_document.filename if id_document else None
+        
         verification_data = {
             "identity_type": identity_type,
             "document_number": document_number,
-            "document_url": document_url,
+            "document_name": file_name,
             "kyc_status": "pending_verification"
         }
-
-        # Bind the KYC data to the authenticated user's profile
-        res = supabase.table("profiles").update(verification_data).eq("user_id", user_id).execute()
-
+        
+        # Update user profile in MongoDB with KYC status
+        result = await db.users.update_one(
+            {"_id": ObjectId(user_id)}, 
+            {"$set": verification_data}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="User not found")
+            
         return {
+            "status": "success", 
             "message": "Identity documentation submitted successfully", 
             "kyc_status": "pending_verification"
         }

@@ -12,7 +12,7 @@ from google import genai
 
 # API Clients & Credentials
 SAHARA_API_KEY = os.getenv("SAHARA_API_KEY")
-SAHARA_ENDPOINT = "https://api.intron.io/v2.5/speech-to-text"
+SAHARA_ENDPOINT = "https://infer.voice.intron.io/file/v1/upload"
 whisper_client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 gemini_client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 

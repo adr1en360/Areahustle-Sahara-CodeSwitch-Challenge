@@ -1,33 +1,47 @@
-from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
-from backend.database import supabase
+from fastapi import APIRouter, HTTPException, status
+from pydantic import BaseModel, EmailStr
+from passlib.context import CryptContext
+from backend.database import db
+from datetime import datetime
 
 router = APIRouter()
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-class UserCredentials(BaseModel):
-    email: str
+class UserSignup(BaseModel):
+    email: EmailStr
     password: str
-    role: str # 'hustler' or 'client'
+    role: str  # 'hustler' or 'client'
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
 
 @router.post("/signup")
-async def signup(user: UserCredentials):
-    try:
-        res = supabase.auth.sign_up({
-            "email": user.email,
-            "password": user.password,
-            "options": {"data": {"role": user.role}}
-        })
-        return {"message": "User created successfully", "user": res.user}
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+async def signup(user: UserSignup):
+    existing_user = await db.users.find_one({"email": user.email})
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
+    hashed_password = pwd_context.hash(user.password)
+    user_doc = {
+        "email": user.email,
+        "password": hashed_password,
+        "role": user.role,
+        "created_at": datetime.utcnow()
+    }
+    
+    result = await db.users.insert_one(user_doc)
+    return {"status": "success", "user_id": str(result.inserted_id), "role": user.role}
 
 @router.post("/login")
-async def login(user: UserCredentials):
-    try:
-        res = supabase.auth.sign_in_with_password({
-            "email": user.email,
-            "password": user.password
-        })
-        return {"access_token": res.session.access_token, "user": res.user}
-    except Exception as e:
-        raise HTTPException(status_code=401, detail="Invalid credentials")
+async def login(user: UserLogin):
+    db_user = await db.users.find_one({"email": user.email})
+    if not db_user or not pwd_context.verify(user.password, db_user["password"]):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
+    
+    return {
+        "status": "success", 
+        "user_id": str(db_user["_id"]), 
+        "role": db_user["role"],
+        "message": "Login successful"
+    }
