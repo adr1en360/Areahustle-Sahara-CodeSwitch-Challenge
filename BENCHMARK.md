@@ -26,7 +26,7 @@ AreaHustle is a voice-first gig marketplace for Lagos informal markets where cus
 
 ### Dataset Specifications
 
-- **Source:** Curated evaluation set of natural artisan dispatch commands in Lagos informal markets (self-recorded).
+- **Source:** Curated evaluation set of natural artisan dispatch commands in Lagos informal markets (self-recorded; recordings available on request — participant voices are not published in the repo).
 - **Language/Dialect:** Nigerian Pidgin–English (`pcm`) with regional trade vocabulary.
 - **Sample size & duration:** 20 consented recordings; total {{TOTAL_DURATION}} minutes of audio; average clip length {{AVG_DURATION}} seconds.
 - **Audio preprocessing:** Normalized to 16,000 Hz, 16-bit PCM, single-channel mono WAV with peak loudness normalization (automated in-notebook via FFmpeg).

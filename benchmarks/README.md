@@ -13,6 +13,8 @@ Everything here runs **on Google Colab** — nothing runs locally. The pipeline 
 
 Artifacts you bring back from Colab (`results.json`, zipped audio) are ignored by git — don't commit them; the repo only needs the notebook, the dataset, and the final `BENCHMARK.md` report.
 
+**The recordings are deliberately NOT committed** — they are friends' voices, so `benchmarks/audio/` and `audio.zip` are gitignored. The benchmark is fully reproducible for anyone you privately share the audio with; the public repo carries the notebook, ground-truth dataset, and results instead.
+
 ## The Three Models
 
 | Model | Role | How it runs |
