@@ -67,12 +67,14 @@ export default function PassportPage() {
       return;
     }
 
-    Promise.all([api.getPassport(), api.getProofCard(), api.getTransactions()]).then(([passportData, proofData, txnData]) => {
-      setPassport(passportData);
-      setProofCard(proofData);
-      setTxns(txnData);
-    });
-  }, [isLoggedIn, userRole]);
+    Promise.all([api.getPassport(String(user?.id ?? "demo")), api.getProofCard(), api.getTransactions(String(user?.id ?? "demo"))]).then(
+      ([passportData, proofData, txnData]) => {
+        setPassport(passportData);
+        setProofCard(proofData);
+        setTxns(txnData);
+      },
+    );
+  }, [isLoggedIn, userRole, user?.id]);
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText("https://areahustle.com/p/tunde-820");

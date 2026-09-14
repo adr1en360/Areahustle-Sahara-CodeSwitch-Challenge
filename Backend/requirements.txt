@@ -10,3 +10,4 @@ email-validator
 pymongo
 requests
 httpx
+python-multipart
