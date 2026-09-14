@@ -4,7 +4,7 @@ import os
 
 router = APIRouter()
 SAHARA_API_KEY = os.getenv("SAHARA_API_KEY")
-SAHARA_ENDPOINT = "https://infer.voice.intron.io/file/v1/upload"
+SAHARA_ENDPOINT = "https://infer.voice.intron.io/file/v1/upload/sync"
 
 async def transcribe_and_execute(audio_url: str, caller_phone: str):
     """Fetches audio from Twilio and sends it to Sahara v2.5."""
@@ -13,12 +13,13 @@ async def transcribe_and_execute(audio_url: str, caller_phone: str):
         audio_response = await client.get(audio_url)
         audio_data = audio_response.content
 
-        # 2. Send to Sahara v2.5
+        # 2. Send to Sahara v2.5 (sync endpoint)
         headers = {"Authorization": f"Bearer {SAHARA_API_KEY}"}
-        files = {"audio": ("recording.wav", audio_data, "audio/wav")}
-        
-        sahara_res = await client.post(SAHARA_ENDPOINT, headers=headers, files=files)
-        transcript = sahara_res.json().get("transcript", "")
+        data = {"audio_file_name": "recording.wav", "use_language_asr_input": "pcm"}
+        files = {"audio_file_blob": ("recording.wav", audio_data, "audio/wav")}
+
+        sahara_res = await client.post(SAHARA_ENDPOINT, headers=headers, data=data, files=files)
+        transcript = sahara_res.json().get("data", {}).get("audio_transcript", "")
 
         # 3. (Next Phase) Pass `transcript` to Gemini for intent extraction
         print(f"Sahara Transcript for {caller_phone}: {transcript}")
