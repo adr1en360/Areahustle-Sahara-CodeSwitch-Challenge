@@ -1,6 +1,10 @@
 from fastapi import APIRouter, HTTPException, UploadFile, File, Form
-from database import db
 from bson import ObjectId
+
+try:
+    from ..database import db
+except ImportError:
+    from database import db
 
 router = APIRouter()
 

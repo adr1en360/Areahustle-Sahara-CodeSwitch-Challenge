@@ -1,8 +1,13 @@
 from fastapi import APIRouter, HTTPException, BackgroundTasks
 from pydantic import BaseModel
-from database import db
-from agents.hustler_notifier import send_sms_alert
 from bson import ObjectId
+
+try:
+    from ..database import db
+    from ..agents.hustler_notifier import send_sms_alert
+except ImportError:
+    from database import db
+    from agents.hustler_notifier import send_sms_alert
 
 router = APIRouter()
 

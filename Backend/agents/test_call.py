@@ -5,6 +5,7 @@ import os
 router = APIRouter()
 SAHARA_API_KEY = os.getenv("SAHARA_API_KEY")
 SAHARA_ENDPOINT = "https://infer.voice.intron.io/file/v1/upload"
+
 async def transcribe_and_execute(audio_url: str, caller_phone: str):
     """Fetches audio from Twilio and sends it to Sahara v2.5."""
     async with httpx.AsyncClient() as client:

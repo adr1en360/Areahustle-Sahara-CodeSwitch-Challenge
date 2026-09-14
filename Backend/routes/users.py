@@ -1,8 +1,12 @@
-from fastapi import APIRouter, HTTPException, Depends, Header
-from backend.database import db
+from fastapi import APIRouter, HTTPException
 from bson import ObjectId
 import jwt
 import os
+
+try:
+    from ..database import db
+except ImportError:
+    from database import db
 
 router = APIRouter()
 SECRET_KEY = os.getenv("SECRET_KEY", "fallback_secret")

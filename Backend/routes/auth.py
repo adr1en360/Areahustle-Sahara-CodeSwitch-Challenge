@@ -1,8 +1,12 @@
 from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel, EmailStr
 from passlib.context import CryptContext
-from database import db
 from datetime import datetime
+
+try:
+    from ..database import db
+except ImportError:
+    from database import db
 
 router = APIRouter()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
