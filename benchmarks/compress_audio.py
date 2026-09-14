@@ -22,7 +22,7 @@ HERE = Path(__file__).resolve().parent
 AUDIO_DIR = HERE / "audio"
 OUTPUT = HERE / "audio.zip"
 EXPECTED_COUNT = 20
-AUDIO_EXTS = {".m4a", ".aac", ".opus", ".mp3", ".ogg", ".wav", ".amr", ".3gp"}
+AUDIO_EXTS = {".m4a", ".aac", ".opus", ".mp3", ".ogg", ".wav", ".amr", ".3gp", ".mp4"}
 
 
 def main():
