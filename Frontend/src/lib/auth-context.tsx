@@ -95,30 +95,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [user]);
 
   const login = async (data: any) => {
-    const role = data?.role ?? (String(data?.username ?? "").includes("customer") ? "customer" : "hustler");
+    const authResult = await api.login(data);
+    const role = authResult?.role || data?.role || (String(data?.username ?? "").includes("customer") ? "customer" : "hustler");
     const nextUser = syncDemoState({
       ...defaultUser,
       role,
-      email: data?.username ?? data?.email ?? defaultUser.email,
+      id: authResult?.user_id ?? defaultUser.id,
+      email: data?.email ?? data?.username ?? defaultUser.email,
       name: data?.name ?? (data?.username ? data.username.split("@")[0] : defaultUser.name),
       wallet_balance: role === "customer" ? 60000 : 24500,
       trust_score: role === "customer" ? 0 : 820,
     });
 
     if (typeof window !== "undefined") {
-      window.localStorage.setItem("token", "demo-token");
+      window.localStorage.setItem("token", authResult?.access_token || "demo-token");
       window.localStorage.setItem("areahustle-demo-user", JSON.stringify(nextUser));
     }
-    setToken("demo-token");
+    setToken(authResult?.access_token || "demo-token");
     setUser(nextUser);
     return nextUser;
   };
 
   const register = async (data: any) => {
-    const role = data?.role ?? "customer";
+    const authResult = await api.register(data);
+    const role = authResult?.role || data?.role || "customer";
     const nextUser = syncDemoState({
       ...defaultUser,
       role,
+      id: authResult?.id ?? defaultUser.id,
       email: data?.email ?? defaultUser.email,
       name: data?.name ?? defaultUser.name,
       wallet_balance: role === "customer" ? 60000 : 24500,
@@ -126,10 +130,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     if (typeof window !== "undefined") {
-      window.localStorage.setItem("token", "demo-token");
+      window.localStorage.setItem("token", authResult?.access_token || "demo-token");
       window.localStorage.setItem("areahustle-demo-user", JSON.stringify(nextUser));
     }
-    setToken("demo-token");
+    setToken(authResult?.access_token || "demo-token");
     setUser(nextUser);
     return nextUser;
   };

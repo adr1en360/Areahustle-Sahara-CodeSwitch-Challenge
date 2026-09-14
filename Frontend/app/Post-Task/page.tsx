@@ -32,7 +32,7 @@ export default function PostTask() {
   const createTask = async (data: any) => {
     await api.createTask(data);
     toast.success("Job Posted!");
-    window.location.href = "/customer-dashboard";
+    window.location.href = "/Customer-Dashboard";
   };
 
   const startRecording = async () => {

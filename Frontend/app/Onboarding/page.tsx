@@ -51,7 +51,7 @@ function Onboarding() {
         categories: ["General", "Cleaning", "Repairs", "Errands"],
       });
       toast.success("Profile fully set up!");
-      window.location.href = "/jobs";
+      window.location.href = "/Jobs";
     } catch (err: any) {
       toast.error(err.message || "Failed to create profile");
     } finally {

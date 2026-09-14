@@ -100,7 +100,7 @@ export default function CustomerDashboard() {
           <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight">Manage your requests.</h1>
         </div>
         <button
-          onClick={() => (window.location.href = "/post-task")}
+          onClick={() => (window.location.href = "/Post-Task")}
           className="inline-flex items-center justify-center w-full sm:w-auto gap-2 rounded-full bg-voice text-voice-foreground px-5 py-3 text-sm font-semibold shadow-soft hover:opacity-95 transition"
         >
           <Plus className="h-4 w-4" /> Post New Task
@@ -135,7 +135,7 @@ export default function CustomerDashboard() {
           <h3 className="font-display text-xl font-bold mb-2">Need something done fast?</h3>
           <p className="text-muted-foreground text-sm max-w-sm mb-6">Use our voice-enabled task terminal to post a job in seconds.</p>
           <button
-            onClick={() => (window.location.href = "/post-task")}
+            onClick={() => (window.location.href = "/Post-Task")}
             className="rounded-full bg-muted border px-6 py-2.5 text-sm font-semibold hover:bg-muted/80 transition"
           >
             Try Voice Terminal

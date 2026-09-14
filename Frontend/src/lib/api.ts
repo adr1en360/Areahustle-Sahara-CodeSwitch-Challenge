@@ -17,6 +17,7 @@ const demoUser: DemoUser = {
 };
 
 const wait = () => new Promise((resolve) => setTimeout(resolve, 150));
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8001";
 
 const defaultJobs = [
   {
@@ -85,32 +86,123 @@ const getLocalProfile = () => {
   }
 };
 
+const requestJson = async (path: string, options: RequestInit = {}) => {
+  const headers = new Headers(options.headers ?? {});
+  const token = typeof window !== "undefined" ? window.localStorage.getItem("token") : null;
+
+  if (token && !headers.has("Authorization")) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+
+  if (options.body && !(options.body instanceof FormData) && !headers.has("Content-Type")) {
+    headers.set("Content-Type", "application/json");
+  }
+
+  const response = await fetch(`${API_BASE}${path}`, { ...options, headers });
+  if (!response.ok) {
+    const text = await response.text();
+    let detail = "Request failed";
+    try {
+      detail = JSON.parse(text).detail || JSON.parse(text).message || detail;
+    } catch {
+      detail = text || detail;
+    }
+    throw new Error(detail);
+  }
+
+  const contentType = response.headers.get("content-type") || "";
+  if (contentType.includes("application/json")) {
+    return response.json();
+  }
+
+  return response.text();
+};
+
+const withFallback = async <T>(operation: () => Promise<T>, fallback: T): Promise<T> => {
+  try {
+    return await operation();
+  } catch {
+    return fallback;
+  }
+};
+
+const normalizeJob = (job: any) => ({
+  ...job,
+  id: job.id ?? job._id ?? `job-${Date.now()}`,
+  location: job.location ?? job.neighbourhood ?? "Lekki Phase 1",
+  neighbourhood: job.neighbourhood ?? job.location ?? "Lekki Phase 1",
+  status: job.status ?? "open",
+  budget: Number(job.budget ?? 0),
+});
+
 export const api = {
-  login: async (data: any) => {
-    await wait();
-    return { access_token: `demo-token-${data?.username ?? "user"}` };
-  },
-  register: async (data: any) => {
-    await wait();
-    demoUser.email = data.email ?? demoUser.email;
-    demoUser.name = data.name ?? demoUser.name;
-    demoUser.role = data.role ?? demoUser.role;
-    return { ...demoUser };
-  },
+  login: async (data: any) =>
+    withFallback(
+      async () => {
+        const result = await requestJson("/api/auth/login", {
+          method: "POST",
+          body: JSON.stringify({ email: data?.email ?? data?.username, password: data?.password }),
+        });
+        return {
+          access_token: result.access_token || `demo-token-${Date.now()}`,
+          user_id: result.user_id,
+          role: result.role || (String(data?.username ?? "").includes("customer") ? "customer" : "hustler"),
+          email: data?.email ?? data?.username,
+        };
+      },
+      {
+        access_token: `demo-token-${data?.username ?? data?.email ?? "user"}`,
+        user_id: data?.user_id ?? 1,
+        role: data?.role ?? (String(data?.username ?? "").includes("customer") ? "customer" : "hustler"),
+        email: data?.email ?? data?.username,
+      },
+    ),
+
+  register: async (data: any) =>
+    withFallback(
+      async () => {
+        const result = await requestJson("/api/auth/signup", {
+          method: "POST",
+          body: JSON.stringify({
+            email: data.email,
+            password: data.password,
+            role: data.role ?? "customer",
+          }),
+        });
+        const user = {
+          id: result.user_id ?? 1,
+          email: data.email,
+          name: data.name ?? data.email.split("@")[0],
+          role: data.role ?? "customer",
+          wallet_balance: data.role === "customer" ? 60000 : 24500,
+          trust_score: data.role === "customer" ? 0 : 820,
+          access_token: result.access_token || `demo-token-${Date.now()}`,
+        };
+        if (typeof window !== "undefined") window.localStorage.setItem("areahustle-demo-user", JSON.stringify(user));
+        return user;
+      },
+      {
+        ...demoUser,
+        id: 1,
+        email: data.email ?? demoUser.email,
+        name: data.name ?? demoUser.name,
+        role: data.role ?? demoUser.role,
+        access_token: `demo-token-${data?.email ?? "user"}`,
+      },
+    ),
+
   getMe: async () => {
-    await wait();
-    if (typeof window !== "undefined") {
-      const saved = window.localStorage.getItem("areahustle-demo-user");
-      if (saved) {
-        try {
-          return JSON.parse(saved);
-        } catch {
-          return { ...demoUser };
-        }
+    const saved = typeof window !== "undefined" ? window.localStorage.getItem("areahustle-demo-user") : null;
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        // ignore malformed local cache
       }
     }
     return { ...demoUser };
   },
+
   updateWallet: async (amount: number) => {
     await wait();
     const current = await api.getMe();
@@ -118,70 +210,142 @@ export const api = {
     if (typeof window !== "undefined") window.localStorage.setItem("areahustle-demo-user", JSON.stringify(next));
     return next;
   },
-  getTasks: async ({ status, neighbourhood }: { status?: string; neighbourhood?: string } = {}) => {
-    await wait();
-    return getLocalJobs().filter((job: any) => {
-      const matchesStatus = !status || job.status === status;
-      const matchesLocation = !neighbourhood || (job.location || job.neighbourhood) === neighbourhood;
-      return matchesStatus && matchesLocation;
-    });
-  },
-  getMyTasks: async () => {
-    await wait();
-    return getLocalJobs().filter((job: any) => job.status !== "open");
-  },
-  createTask: async (data: any) => {
-    await wait();
-    const jobs = getLocalJobs();
-    const next = {
-      id: `job-${Date.now()}`,
-      title: data.title ?? "New Task",
-      description: data.description ?? "",
-      category: data.category ?? "General",
-      budget: Number(data.budget ?? 0),
-      location: data.neighbourhood ?? "Lekki Phase 1",
-      neighbourhood: data.neighbourhood ?? "Lekki Phase 1",
-      status: "open",
-      customer: "You",
-    };
-    saveLocalJobs([next, ...jobs]);
-    return next;
-  },
-  matchTask: async (id: string) => {
-    await wait();
-    const jobs = getLocalJobs();
-    const updated = jobs.map((job: any) => (job.id === id ? { ...job, status: "matched" } : job));
-    saveLocalJobs(updated);
-    return updated.find((job: any) => job.id === id);
-  },
-  activateTask: async (id: string) => {
-    await wait();
-    const jobs = getLocalJobs();
-    const updated = jobs.map((job: any) => (job.id === id ? { ...job, status: "in_progress" } : job));
-    saveLocalJobs(updated);
-    return updated.find((job: any) => job.id === id);
-  },
-  completeTask: async (id: string) => {
-    await wait();
-    const jobs = getLocalJobs();
-    const updated = jobs.map((job: any) => (job.id === id ? { ...job, status: "completed" } : job));
-    saveLocalJobs(updated);
-    return updated.find((job: any) => job.id === id);
-  },
-  updateTask: async (id: string, payload: any) => {
-    await wait();
-    const jobs = getLocalJobs();
-    const updated = jobs.map((job: any) => (job.id === id ? { ...job, ...payload } : job));
-    saveLocalJobs(updated);
-    return updated.find((job: any) => job.id === id);
-  },
-  getPassport: async () => ({
-    trust_score: 820,
-    job_completion_rate: 96,
-    on_time_arrival: 94,
-    repeat_hire_ratio: 88,
-    dispute_rate: 2,
-  }),
+
+  getTasks: async ({ status, neighbourhood }: { status?: string; neighbourhood?: string } = {}) =>
+    withFallback(
+      async () => {
+        const params = new URLSearchParams();
+        if (status) params.set("status", status);
+        if (neighbourhood) params.set("neighbourhood", neighbourhood);
+        const result = await requestJson(`/api/tasks${params.toString() ? `?${params.toString()}` : ""}`);
+        return Array.isArray(result) ? result.map(normalizeJob) : [];
+      },
+      getLocalJobs().filter((job: any) => {
+        const matchesStatus = !status || job.status === status;
+        const matchesLocation = !neighbourhood || (job.location || job.neighbourhood) === neighbourhood;
+        return matchesStatus && matchesLocation;
+      }),
+    ),
+
+  getMyTasks: async () =>
+    withFallback(
+      async () => {
+        const result = await requestJson("/api/tasks/my");
+        return Array.isArray(result) ? result.map(normalizeJob) : [];
+      },
+      getLocalJobs().filter((job: any) => job.status !== "open"),
+    ),
+
+  createTask: async (data: any) =>
+    withFallback(
+      async () => {
+        const payload = {
+          title: data.title,
+          description: data.description,
+          budget: Number(data.budget ?? 0),
+          neighbourhood: data.neighbourhood ?? "Lekki Phase 1",
+          category: data.category ?? "General",
+          customer_id: data.customer_id ?? "demo-customer",
+          status: data.status ?? "open",
+        };
+        const result = await requestJson("/api/tasks", {
+          method: "POST",
+          body: JSON.stringify(payload),
+        });
+        return normalizeJob(result);
+      },
+      (() => {
+        const jobs = getLocalJobs();
+        const next = normalizeJob({
+          id: `job-${Date.now()}`,
+          title: data.title ?? "New Task",
+          description: data.description ?? "",
+          category: data.category ?? "General",
+          budget: Number(data.budget ?? 0),
+          location: data.neighbourhood ?? "Lekki Phase 1",
+          neighbourhood: data.neighbourhood ?? "Lekki Phase 1",
+          status: "open",
+          customer: "You",
+        });
+        saveLocalJobs([next, ...jobs]);
+        return next;
+      })(),
+    ),
+
+  matchTask: async (id: string) =>
+    withFallback(
+      async () => {
+        const result = await requestJson(`/api/tasks/${id}/match`, { method: "POST" });
+        return result;
+      },
+      (() => {
+        const jobs = getLocalJobs();
+        const updated = jobs.map((job: any) => (String(job.id ?? job._id) === String(id) ? { ...job, status: "matched" } : job));
+        saveLocalJobs(updated);
+        return updated.find((job: any) => String(job.id ?? job._id) === String(id));
+      })(),
+    ),
+
+  activateTask: async (id: string) =>
+    withFallback(
+      async () => {
+        const result = await requestJson(`/api/tasks/${id}/activate`, { method: "POST" });
+        return result;
+      },
+      (() => {
+        const jobs = getLocalJobs();
+        const updated = jobs.map((job: any) => (String(job.id ?? job._id) === String(id) ? { ...job, status: "in_progress" } : job));
+        saveLocalJobs(updated);
+        return updated.find((job: any) => String(job.id ?? job._id) === String(id));
+      })(),
+    ),
+
+  completeTask: async (id: string) =>
+    withFallback(
+      async () => {
+        const result = await requestJson(`/api/tasks/${id}/complete`, { method: "POST" });
+        return result;
+      },
+      (() => {
+        const jobs = getLocalJobs();
+        const updated = jobs.map((job: any) => (String(job.id ?? job._id) === String(id) ? { ...job, status: "completed" } : job));
+        saveLocalJobs(updated);
+        return updated.find((job: any) => String(job.id ?? job._id) === String(id));
+      })(),
+    ),
+
+  updateTask: async (id: string, payload: any) =>
+    withFallback(
+      async () => {
+        const result = await requestJson(`/api/tasks/${id}`, {
+          method: "PATCH",
+          body: JSON.stringify(payload),
+        });
+        return result;
+      },
+      (() => {
+        const jobs = getLocalJobs();
+        const updated = jobs.map((job: any) => (String(job.id ?? job._id) === String(id) ? { ...job, ...payload } : job));
+        saveLocalJobs(updated);
+        return updated.find((job: any) => String(job.id ?? job._id) === String(id));
+      })(),
+    ),
+
+  getPassport: async () =>
+    withFallback(
+      async () => {
+        const result = await requestJson("/api/passport/profile/demo");
+        return result;
+      },
+      {
+        trust_score: 820,
+        job_completion_rate: 96,
+        on_time_arrival: 94,
+        repeat_hire_ratio: 88,
+        dispute_rate: 2,
+      },
+    ),
+
   getProofCard: async () => ({
     hustler_name: "Demo Hustler",
     hustler_id: "AH-8201",
@@ -193,24 +357,29 @@ export const api = {
     verification_hash: "AHX-2026-820",
     generated_at: new Date().toISOString(),
   }),
+
   getTransactions: async () => [
     { id: 1, type: "deposit", amount: 15000, date: "Today", desc: "Wallet top-up", location: "Lagos" },
     { id: 2, type: "payment", amount: -3200, date: "Yesterday", desc: "Generator repair payout", location: "Lekki" },
     { id: 3, type: "deposit", amount: 6000, date: "2 days ago", desc: "Task payout", location: "Yaba" },
   ],
+
   createHustlerProfile: async (data: any) => {
     await wait();
     const profile = { ...defaultProfile, ...data };
     if (typeof window !== "undefined") window.localStorage.setItem("areahustle-demo-profile", JSON.stringify(profile));
     return profile;
   },
+
   getHustlerProfile: async () => ({ ...getLocalProfile() }),
+
   updateHustlerProfile: async (data: any) => {
     await wait();
     const profile = { ...getLocalProfile(), ...data };
     if (typeof window !== "undefined") window.localStorage.setItem("areahustle-demo-profile", JSON.stringify(profile));
     return profile;
   },
+
   voiceToIntentUpload: async (_formData?: FormData) => ({
     category: "General",
     description: "Need a reliable helper for a quick errand and setup in Lekki Phase 1.",
