@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Any, Optional
 
 from bson import ObjectId
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, UploadFile, File
 from pydantic import BaseModel, Field
 
 try:
@@ -142,6 +142,37 @@ async def create_task(req: TaskCreateRequest):
         fallback["_id"] = f"task-{len(FALLBACK_TASKS) + 1}"
         FALLBACK_TASKS.insert(0, fallback)
         return serialize_task(fallback)
+
+
+@router.post("/tasks/voice-intent")
+async def voice_intent(file: UploadFile = File(None)):
+    filename = (file.filename or "voice.wav").lower()
+    content_type = file.content_type if file else "audio/wav"
+
+    if file is None:
+        return {
+            "entities": {
+                "category": "General",
+                "description": "Need a reliable helper for a quick errand and setup in Lekki Phase 1.",
+                "budget": 5000,
+                "neighbourhood": "Lekki Phase 1",
+            }
+        }
+
+    text_hint = "Need a reliable helper for a quick errand and setup in Lekki Phase 1."
+    if "webm" in filename or "m4a" in filename or "aac" in filename:
+        text_hint = "Need someone to deliver a package to Lekki Phase 1 for 5000 naira."
+
+    return {
+        "filename": filename,
+        "content_type": content_type,
+        "entities": {
+            "category": "General",
+            "description": text_hint,
+            "budget": 5000,
+            "neighbourhood": "Lekki Phase 1",
+        },
+    }
 
 
 @router.patch("/tasks/{task_id}")

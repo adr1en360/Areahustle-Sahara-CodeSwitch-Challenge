@@ -32,6 +32,22 @@ export function VoiceTerminal() {
     };
   }, [voiceOpen]);
 
+  useEffect(() => {
+    if (!voiceOpen || phase !== "ready") return;
+
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+
+    const utterance = new SpeechSynthesisUtterance(
+      "Your task is ready. I have structured the request for nearby hustlers in your area."
+    );
+    utterance.lang = "en-NG";
+    utterance.rate = 1;
+    utterance.pitch = 1;
+
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+  }, [voiceOpen, phase]);
+
   const close = () => setVoiceOpen(false);
 
   const confirm = () => {

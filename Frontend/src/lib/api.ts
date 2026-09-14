@@ -331,10 +331,10 @@ export const api = {
       })(),
     ),
 
-  getPassport: async () =>
+  getPassport: async (userId = "demo") =>
     withFallback(
       async () => {
-        const result = await requestJson("/api/passport/profile/demo");
+        const result = await requestJson(`/api/passport/profile/${userId}`);
         return result;
       },
       {
@@ -358,11 +358,18 @@ export const api = {
     generated_at: new Date().toISOString(),
   }),
 
-  getTransactions: async () => [
-    { id: 1, type: "deposit", amount: 15000, date: "Today", desc: "Wallet top-up", location: "Lagos" },
-    { id: 2, type: "payment", amount: -3200, date: "Yesterday", desc: "Generator repair payout", location: "Lekki" },
-    { id: 3, type: "deposit", amount: 6000, date: "2 days ago", desc: "Task payout", location: "Yaba" },
-  ],
+  getTransactions: async (userId = "demo") =>
+    withFallback(
+      async () => {
+        const result = await requestJson(`/api/transactions/user/${userId}`);
+        return Array.isArray(result) ? result : [];
+      },
+      [
+        { id: 1, type: "deposit", amount: 15000, date: "Today", desc: "Wallet top-up", location: "Lagos" },
+        { id: 2, type: "payment", amount: -3200, date: "Yesterday", desc: "Generator repair payout", location: "Lekki" },
+        { id: 3, type: "deposit", amount: 6000, date: "2 days ago", desc: "Task payout", location: "Yaba" },
+      ],
+    ),
 
   createHustlerProfile: async (data: any) => {
     await wait();
@@ -380,10 +387,41 @@ export const api = {
     return profile;
   },
 
-  voiceToIntentUpload: async (_formData?: FormData) => ({
-    category: "General",
-    description: "Need a reliable helper for a quick errand and setup in Lekki Phase 1.",
-    budget: 5000,
-    neighbourhood: "Lekki Phase 1",
-  }),
+  voiceToIntentUpload: async (formData?: FormData) => {
+    if (!formData) {
+      return {
+        category: "General",
+        description: "Need a reliable helper for a quick errand and setup in Lekki Phase 1.",
+        budget: 5000,
+        neighbourhood: "Lekki Phase 1",
+      };
+    }
+
+    try {
+      const file = formData.get("file");
+      const payload = new FormData();
+      if (file) payload.append("file", file);
+
+      const result = await requestJson("/api/tasks/voice-intent", {
+        method: "POST",
+        body: payload,
+      });
+
+      if (result?.entities) return result.entities;
+      if (result?.category || result?.description || result?.budget || result?.neighbourhood) return result;
+      return {
+        category: "General",
+        description: "Need a reliable helper for a quick errand and setup in Lekki Phase 1.",
+        budget: 5000,
+        neighbourhood: "Lekki Phase 1",
+      };
+    } catch {
+      return {
+        category: "General",
+        description: "Need a reliable helper for a quick errand and setup in Lekki Phase 1.",
+        budget: 5000,
+        neighbourhood: "Lekki Phase 1",
+      };
+    }
+  },
 };
