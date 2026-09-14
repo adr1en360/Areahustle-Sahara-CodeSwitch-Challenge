@@ -8,9 +8,10 @@ The `docs/` workspace serves as the authoritative single source of truth for Are
 2. **Architecture Reference**: Developers consult `docs/ARCHITECTURE.md` for endpoint schemas, sequence flows, and state machine definitions.
 3. **Frontend Coordination**: Frontend engineers use `docs/FRONTEND_HANDOFF.md` for endpoint contracts, expected payloads, and UI connection steps.
 
-## Files In Here
 - `USER_STORY.md`: Exhaustive narrative capturing user pain points, personas, end-to-end user stories, competition strategy, what is in/out of scope, and rationale behind all technical decisions.
 - `ARCHITECTURE.md`: Complete system design, data flow diagrams, REST endpoint schemas, Sahara Voice integration specs, and task lifecycle state transitions.
+- `SAHARA_API_REFERENCE.md`: Authoritative technical reference for the Intron Sahara Voice STT API (endpoints, field names, response JSON, language codes, and formats).
+- `SUBMISSION_AND_OPERATIONAL_GUIDE.md`: Operational safeguards (30s cold-start retry, PyAV normalization, dual phone mapping, localhost base URL) and submission form answers (Question 7 250-word architecture tradeoffs, downstream task performance table, access code trap).
 - `FRONTEND_HANDOFF.md`: Explicit integration instructions for the frontend developer, listing new and existing endpoints, expected multipart headers, and response formats.
 
 ## What Good Output Looks Like

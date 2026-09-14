@@ -166,11 +166,11 @@ export const voiceApi = {
 
 ---
 
-## 5. UI & Branding Checklist for Frontend Dev
-
 1. **Brand Name**: Replace any legacy references to "Aethex" or "Twilio" with **"Sahara Voice"** or **"Intron Sahara"**.
 2. **Language Toggle**: In `Post-Task/page.tsx`, add a clean pill toggle:
    - `[🇳🇬 Pidgin (Default)]` / `[Yoruba-English]`
    - Passing `"pcm"` or `"yo"` to the API.
 3. **Escrow Visual Feedback**: When the user locks escrow, show an animated badge indicating funds are secured in escrow until the job is completed.
 4. **Error Handling**: If the user's audio is inaudible, display a friendly toast: *"Could not clearly catch that. Please speak closer to the mic or try again."*
+5. **API Base URL Configuration**: In `Frontend/.env.local`, set `NEXT_PUBLIC_API_URL=http://localhost:8000`. By default, `Frontend/src/lib/api.ts` falls back to a remote Render instance (`https://areahustle-backend.onrender.com`), which may be sleeping or unresponsive during local testing.
+6. **Phone Number Field Contract**: Ensure your modals access `customerPhone` and `hustlerPhone`. The backend serializes both snake_case (`customer_phone`) and camelCase (`customerPhone`) to guarantee contact modals never display `undefined`.

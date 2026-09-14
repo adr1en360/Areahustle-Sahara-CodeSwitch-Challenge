@@ -58,17 +58,21 @@ AreaHustle decouples high-friction human voice capture from rigid relational mar
 - **Base Endpoint**: `https://infer.voice.intron.io`
 - **Sync Upload Path**: `POST /file/v1/upload/sync`
 - **Authentication**: `Authorization: Bearer <SAHARA_API_KEY>`
-- **Supported Formats**: `wav`, `webm`, `mp3`, `ogg`, `m4a`, `flac`
-- **Target Formats**: 16kHz mono 16-bit PCM WAV (server converts incoming WebM/Opus via `pydub` if needed)
-- **Max Audio Length**: 120 seconds
-- **Language Dialect Codes**:
+- **Required Multipart Form Fields**:
+  - `audio_file_blob`: The binary audio file
+  - `audio_file_name`: String filename with extension (e.g. `recording.wav`, `note.webm`)
+  - `use_language_asr_input`: Language code (`pcm`, `yo`, `ha`, `ig`, `sw`, `en`)
+- **Response Format**: Transcript is returned at `response["data"]["audio_transcript"]`.
+- **Supported Formats**: `wav`, `webm`, `mp3`, `ogg`, `m4a`, `flac` (accepted natively by Sahara).
+- **Max Audio Length**: 120 seconds (sync limit; processing >120s returns HTTP 503 with a `file_id`).
+- **Language Dialect Codes (`use_language_asr_input`)**:
   - `pcm`: Nigerian Pidgin English (Default)
   - `yo`: Yoruba / Yoruba-English CodeSwitch
   - `ig`: Igbo / Igbo-English CodeSwitch
   - `ha`: Hausa / Hausa-English CodeSwitch
 
-### Audio Conversion Layer (`sahara_client.py`)
-To prevent format rejection when mobile browsers record in different formats (Chrome on Android uses `audio/webm;codecs=opus`, Safari on iOS uses `audio/mp4`), `sahara_client.py` uses `pydub` to convert incoming audio buffers directly into standard 16kHz WAV before transmitting to Sahara.
+### Audio Pipeline & Format Handling (`sahara_client.py`)
+Because the Intron Sahara Voice API natively supports `webm`, `wav`, `ogg`, `mp4`, and `m4a`, incoming audio from mobile browser `MediaRecorder` instances can be sent directly to Sahara. `pydub` transcoding to WAV is maintained as a fallback for non-standard streams. Full technical details are recorded in [`docs/SAHARA_API_REFERENCE.md`](file:///c:/Users/DELL/Documents/Areahustle-Sahara-CodeSwitch-Challenge/docs/SAHARA_API_REFERENCE.md).
 
 ---
 
