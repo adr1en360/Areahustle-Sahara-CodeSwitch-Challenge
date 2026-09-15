@@ -94,16 +94,21 @@ async def list_tasks(
 
 
 @router.get("/tasks/my")
-async def list_my_tasks(customer_id: Optional[str] = Query(None)):
+async def list_my_tasks(customer_id: Optional[str] = Query(None), hustler_id: Optional[str] = Query(None)):
     try:
         query: dict[str, Any] = {}
-        if customer_id:
+        if hustler_id:
+            # Hustler view: only jobs this hustler accepted (recorded at match time).
+            query["hustler_id"] = hustler_id
+        elif customer_id:
             query["customer_id"] = customer_id
         tasks = await db.tasks.find(query).to_list(length=100)
         return [serialize_task(task) for task in tasks]
     except Exception:
         tasks = [serialize_task(task) for task in FALLBACK_TASKS if task.get("status") != "open"]
-        if customer_id:
+        if hustler_id:
+            tasks = [task for task in tasks if task.get("hustler_id") == hustler_id]
+        elif customer_id:
             tasks = [task for task in tasks if task.get("customer_id") == customer_id]
         return tasks
 
@@ -194,16 +199,20 @@ async def update_task(task_id: str, payload: dict[str, Any]):
 
 
 @router.post("/tasks/{task_id}/match")
-async def match_task(task_id: str):
+async def match_task(task_id: str, hustler_id: Optional[str] = Query(None)):
+    # Record which hustler accepted, so /tasks/my can scope to their gigs.
+    update: dict[str, Any] = {"status": "matched"}
+    if hustler_id:
+        update["hustler_id"] = hustler_id
     try:
-        result = await db.tasks.update_one({"_id": ObjectId(task_id)}, {"$set": {"status": "matched"}})
+        result = await db.tasks.update_one({"_id": ObjectId(task_id)}, {"$set": update})
         if result.matched_count == 0:
             raise HTTPException(status_code=404, detail="Task not found")
         return {"status": "success", "task_id": task_id, "status": "matched"}
     except Exception:
         for task in FALLBACK_TASKS:
             if str(task.get("_id")) == task_id:
-                task["status"] = "matched"
+                task.update(update)
                 return {"status": "success", "task_id": task_id, "status": "matched"}
         raise HTTPException(status_code=404, detail="Task not found")
 
