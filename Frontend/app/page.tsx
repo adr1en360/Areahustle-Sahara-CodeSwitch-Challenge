@@ -106,7 +106,7 @@ export default function LandingClient() {
                         <Mic className="h-4 w-4 text-voice" />
                       </div>
                       <div>
-                        <div className="text-xs text-muted-foreground">Aethex · Listening</div>
+                        <div className="text-xs text-muted-foreground">Sahara Voice · Listening</div>
                         <div className="text-sm font-semibold">&quot;Service my generator…&quot;</div>
                       </div>
                     </div>
@@ -156,7 +156,7 @@ export default function LandingClient() {
       {/* LOGOS / TRUST STRIP */}
       <section className="border-y bg-card/60">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 flex flex-wrap items-center justify-center gap-x-6 sm:gap-x-10 gap-y-3 text-[10px] sm:text-xs uppercase tracking-widest text-muted-foreground text-center">
-          <span>Powered by Aethex Voice</span>
+          <span>Powered by Sahara Voice</span>
           <span className="hidden sm:inline">•</span>
           <span>Gemini Intent Parsing</span>
           <span className="hidden sm:inline">•</span>
@@ -177,7 +177,7 @@ export default function LandingClient() {
             {
               icon: Mic,
               t: "Speak Your Task",
-              d: "Tap once and describe what you need. Aethex transcribes; Gemini structures the brief.",
+              d: "Tap once and describe what you need. Sahara transcribes; Gemini structures the brief.",
               c: "voice",
             },
             { icon: Shield, t: "Lock Escrow", d: "Funds are held safely until the job is verified complete. No upfront risk.", c: "primary" },
