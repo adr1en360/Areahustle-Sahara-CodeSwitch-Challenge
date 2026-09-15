@@ -20,6 +20,8 @@ The `Backend/` workspace houses the FastAPI application powering AreaHustle. Its
 - `routes/auth.py`, `passport.py`, `transactions.py`, `users.py`: Supporting user, wallet, and passport routes.
 - `agents/`: Legacy Twilio/telephony agents (unmounted in `main.py` to prevent carrier demo failure).
 - `tests/check_search_query.py`: Verifies the voice-search Mongo query construction (category/location/budget/keyword clauses) without hitting any API.
+- `tests/check_category_map.py`: Verifies category normalization and fuzzy matching onto canonical marketplace categories.
+- `tests/check_language_codes.py`: Compares Sahara STT transcription across language codes on sample audio.
 - `tests/test_gemini_extraction.py`: Standalone Gemini extraction demo script (not part of the server).
 
 ## What Good Output Looks Like
