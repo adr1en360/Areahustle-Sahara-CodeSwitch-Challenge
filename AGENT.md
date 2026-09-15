@@ -25,7 +25,7 @@ AreaHustle is a voice-first gig economy & escrow marketplace built for informal 
 | Competition submission & compliance | `./` | `README.md`, `RESPONSIBLE_AI.md` | — |
 
 ## Naming Conventions
-- Voice Audio Samples: `noteNN.wav`, zero-padded (`note01.wav` … `note20.wav`)
+- Voice Audio Samples: `sample_NN.wav`, zero-padded (`sample_01.wav` … `sample_20.wav`)
 - Backend Services: `<service_name>_client.py` or `<service_name>_extractor.py`
 - Route Handlers: `Backend/routes/<resource>.py`
 - Documentation Specs: `docs/<FEATURE_NAME>.md`

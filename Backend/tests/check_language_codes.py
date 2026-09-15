@@ -19,7 +19,7 @@ load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 from services.sahara_client import transcribe  # noqa: E402
 
-CLIP = Path(__file__).resolve().parents[2] / "benchmarks" / "audio" / "note11.wav"
+CLIP = Path(__file__).resolve().parents[2] / "benchmarks" / "audio" / "sample_11.wav"
 LANGS = ["yo"]  # add e.g. "en" here to compare more codes
 
 
