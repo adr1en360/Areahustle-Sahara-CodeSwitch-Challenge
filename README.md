@@ -123,7 +123,7 @@ python compress_audio.py    # validate + zip for upload
 ```
 Then upload `benchmarks/AreaHustle_Benchmark_Colab.ipynb` to [Google Colab](https://colab.research.google.com) with a T4 GPU runtime, drag `audio.zip` into `/content`, and run top to bottom. See [`benchmarks/README.md`](benchmarks/README.md) for the full workflow.
 
-See [BENCHMARK.md](BENCHMARK.md) for full methodology, WER/CER tables, and qualitative analysis.
+See [BENCHMARK.md](BENCHMARK.md) for full methodology, WER/CER tables, and qualitative analysis. The formatted evaluation report is also available as a 3-page PDF: [`docs/BENCHMARK_REPORT.pdf`](docs/BENCHMARK_REPORT.pdf).
 
 ---
 

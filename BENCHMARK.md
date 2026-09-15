@@ -43,25 +43,25 @@ AreaHustle is a voice-first gig marketplace for Lagos informal markets where cus
 
 | Model | Model Type | Parameters | Dialect | WER (%) | CER (%) |
 |---|---|---|---|---|---|
-| Intron Sahara v2.5 | Domain-Specific API | Proprietary | `pcm` | **33.9** | **18.9** |
-| OpenAI Whisper Large-v3 | General Transformer | 1.55B | English decoding | 67.6 | 30.2 |
-| Meta MMS-1B | Multilingual CTC | 1.0B | `pcm` | 79.9 | 36.2 |
+| Intron Sahara v2.5 | Domain-Specific API | Proprietary | `pcm` | **26.6** | **12.9** |
+| OpenAI Whisper Large-v3 | General Transformer | 1.55B | English decoding | 59.7 | 24.0 |
+| Meta MMS-1B | Multilingual CTC | 1.0B | `pcm` | 75.7 | 31.7 |
 
 ### Table 2: Downstream agentic task performance (Gemini slot-filling)
 
 | Model Source Transcript | Trade Category Accuracy (%) | Location Accuracy (%) | Budget Extraction (%) | End-to-End Task Success (%) |
 |---|---|---|---|---|
-| Intron Sahara v2.5 | **55.0** | **40.0** | **80.0** | **15.0** |
-| OpenAI Whisper Large-v3 | 80.0 | 20.0 | 80.0 | 20.0 |
-| Meta MMS-1B | 60.0 | 30.0 | 50.0 | 5.0 |
+| Intron Sahara v2.5 | **55.0** | **40.0** | **95.0** | **15.0** |
+| OpenAI Whisper Large-v3 | 80.0 | 20.0 | 95.0 | 20.0 |
+| Meta MMS-1B | 60.0 | 30.0 | 65.0 | 5.0 |
 
 ### Quantitative findings
 
-Sahara produces half the transcription error of the best global baseline (WER 33.9% vs 67.6% for Whisper and 79.9% for MMS; CER 18.9% vs 30.2% / 36.2%). The advantage is concentrated where AreaHustle needs it: code-switched Pidgin markers and vernacular trade loanwords.
+Sahara produces less than half the transcription error of the best global baseline (WER 26.6% vs 59.7% for Whisper and 75.7% for MMS; CER 12.9% vs 24.0% / 31.7%). The advantage is concentrated where AreaHustle needs it: code-switched Pidgin markers and vernacular trade loanwords.
 
-Budget extraction is where acoustic error converts directly into money. Sahara and Whisper both land the escrow amount 80% of the time, while MMS's numeral corruption (3500 becomes "10005 hundred", 9000 becomes 1000, and three clips returned a budget of 0) drops it to 50%.
+Budget extraction is where acoustic error converts directly into money. Sahara and Whisper both land the escrow amount 95% of the time, while MMS's numeral corruption (3500 becomes "10005 hundred", 9000 becomes 1000, and three clips returned a budget of 0) drops it to 65%.
 
-Whisper posts the highest category accuracy (80% vs Sahara's 55%) despite double the WER. Its English-biased output happens to match the target label vocabulary ("carpenter", "electrician"), while Sahara's verbatim Pidgin trade terms ("roof repairer", "refrigerator repairer", "brick layer") fail exact string-match against the ground-truth labels ("Roofer", "Fridge repairer", "Bricklayer"). This is label aliasing, not acoustic failure, and it is what motivated the canonical category-mapping layer now shipping in the production backend.
+Whisper posts the highest category accuracy (80% vs Sahara's 55%) despite more than double the WER. Its English-biased output happens to match the target label vocabulary ("carpenter", "electrician"), while Sahara's verbatim Pidgin trade terms ("roof repairer", "refrigerator repairer", "brick layer") fail exact string-match against the ground-truth labels ("Roofer", "Fridge repairer", "Bricklayer"). This is label aliasing, not acoustic failure, and it is what motivated the canonical category-mapping layer now shipping in the production backend.
 
 Location is the weakest slot for every model (Sahara 40%, MMS 30%, Whisper 20%). Yoruba-origin Lagos place names like Ojuelegba, Ilupeju, Ketu, and Agege get phonetically corrupted regardless of model, a failure mode examined in the case study below. Because end-to-end success requires all three slots to match exactly, per-slot accuracies compound into just 15% joint success for Sahara (Whisper 20%, MMS 5%). At n=20 one clip is five percentage points, so the Sahara-Whisper gap is within noise.
 
@@ -97,4 +97,4 @@ The two models fail in complementary ways. `pcm` preserves the code-switched Pid
 
 ### Architectural conclusion
 
-Intron Sahara v2.5 halves the transcription error of the best global baseline (WER 33.9% vs 67.6%) and is the only model that preserves code-switched Pidgin markers and trade loanwords verbatim. The remaining failures concentrate in two places: specialist trade-label vocabulary and Yoruba-origin place names. Both are addressed in the production backend by the canonical category-mapping layer and the per-language (`pcm`/`yo`) toggle, not by the ASR model alone. Per-sample transcripts and full metrics are in `benchmarks/results.json`.
+Intron Sahara v2.5 halves the transcription error of the best global baseline (WER 26.6% vs 59.7%) and is the only model that preserves code-switched Pidgin markers and trade loanwords verbatim. The remaining failures concentrate in two places: specialist trade-label vocabulary and Yoruba-origin place names. Both are addressed in the production backend by the canonical category-mapping layer and the per-language (`pcm`/`yo`) toggle, not by the ASR model alone. Per-sample transcripts and full metrics are in `benchmarks/results.json`.
