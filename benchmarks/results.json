@@ -1,0 +1,1508 @@
+{
+  "metadata": {
+    "language": "pcm",
+    "task": "Nigerian Pidgin-English code-switched artisan dispatch commands",
+    "n_samples": 20,
+    "audio_format": "16000 Hz, 16-bit PCM, mono WAV, peak-normalized",
+    "gemini_model": "gemini-3.5-flash-lite",
+    "mms_adapter": "pcm",
+    "durations_s": {
+      "sample_01.wav": 5.6,
+      "sample_02.wav": 5.5,
+      "sample_03.wav": 5.0,
+      "sample_04.wav": 7.1,
+      "sample_05.wav": 7.9,
+      "sample_06.wav": 8.5,
+      "sample_07.wav": 10.0,
+      "sample_08.wav": 9.8,
+      "sample_09.wav": 7.4,
+      "sample_10.wav": 8.0,
+      "sample_11.wav": 7.3,
+      "sample_12.wav": 8.6,
+      "sample_13.wav": 8.1,
+      "sample_14.wav": 7.5,
+      "sample_15.wav": 6.8,
+      "sample_16.wav": 12.3,
+      "sample_17.wav": 11.4,
+      "sample_18.wav": 10.8,
+      "sample_19.wav": 12.3,
+      "sample_20.wav": 8.9
+    }
+  },
+  "aggregate": {
+    "sahara_v2_5": {
+      "model_name": "Intron Sahara v2.5",
+      "wer_pct": 33.9,
+      "cer_pct": 18.9,
+      "category_accuracy_pct": 55.0,
+      "location_accuracy_pct": 40.0,
+      "budget_accuracy_pct": 80.0,
+      "end_to_end_success_pct": 15.0,
+      "n_samples": 20
+    },
+    "whisper_large_v3": {
+      "model_name": "OpenAI Whisper Large-v3",
+      "wer_pct": 67.6,
+      "cer_pct": 30.2,
+      "category_accuracy_pct": 80.0,
+      "location_accuracy_pct": 20.0,
+      "budget_accuracy_pct": 80.0,
+      "end_to_end_success_pct": 20.0,
+      "n_samples": 20
+    },
+    "mms_1b": {
+      "model_name": "Meta MMS-1B",
+      "wer_pct": 79.9,
+      "cer_pct": 36.2,
+      "category_accuracy_pct": 60.0,
+      "location_accuracy_pct": 30.0,
+      "budget_accuracy_pct": 50.0,
+      "end_to_end_success_pct": 5.0,
+      "n_samples": 20
+    }
+  },
+  "per_sample": [
+    {
+      "filename": "sample_01.wav",
+      "model": "sahara_v2_5",
+      "transcript": "I dey i dey ikeja under bridge my bridge dey sound i need mechanic for five.\n",
+      "predicted": {
+        "category": "mechanic",
+        "location": "ikeja under bridge",
+        "budget_ngn": 5000.0
+      },
+      "target": {
+        "category": "Mechanic",
+        "location": "Ikeja underbridge",
+        "budget_ngn": 5000
+      },
+      "scores": {
+        "category": true,
+        "location": false,
+        "budget_ngn": true,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_01.wav",
+      "model": "whisper_large_v3",
+      "transcript": "ID Ikeza under bridge. My break day sound. I need mechanic for 5K.",
+      "predicted": {
+        "category": "mechanic",
+        "location": "Ikeja",
+        "budget_ngn": 5000.0
+      },
+      "target": {
+        "category": "Mechanic",
+        "location": "Ikeja underbridge",
+        "budget_ngn": 5000
+      },
+      "scores": {
+        "category": true,
+        "location": true,
+        "budget_ngn": true,
+        "end_to_end": true
+      }
+    },
+    {
+      "filename": "sample_01.wav",
+      "model": "mms_1b",
+      "transcript": "idey e kerte ar under brish my breag dey sound and ian mekanik for five ky",
+      "predicted": {
+        "category": "mekanik",
+        "location": "under brish",
+        "budget_ngn": 5000.0
+      },
+      "target": {
+        "category": "Mechanic",
+        "location": "Ikeja underbridge",
+        "budget_ngn": 5000
+      },
+      "scores": {
+        "category": false,
+        "location": false,
+        "budget_ngn": true,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_02.wav",
+      "model": "sahara_v2_5",
+      "transcript": "My kitchen pipe don burst i need plumber fast fast i get 5 k for hand\n",
+      "predicted": {
+        "category": "plumber",
+        "location": "",
+        "budget_ngn": 5000.0
+      },
+      "target": {
+        "category": "Plumber",
+        "location": "Yaba",
+        "budget_ngn": 4000
+      },
+      "scores": {
+        "category": true,
+        "location": false,
+        "budget_ngn": false,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_02.wav",
+      "model": "whisper_large_v3",
+      "transcript": "My kitchen pipe don't burst. I need plumber fast fast. I get 5K for hand.",
+      "predicted": {
+        "category": "plumber",
+        "location": "",
+        "budget_ngn": 5000.0
+      },
+      "target": {
+        "category": "Plumber",
+        "location": "Yaba",
+        "budget_ngn": 4000
+      },
+      "scores": {
+        "category": true,
+        "location": false,
+        "budget_ngn": false,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_02.wav",
+      "model": "mms_1b",
+      "transcript": "my kishing py plone boast i nid plonbar fast-fast i gave five key for hand",
+      "predicted": {
+        "category": "plumber",
+        "location": "",
+        "budget_ngn": 5000.0
+      },
+      "target": {
+        "category": "Plumber",
+        "location": "Yaba",
+        "budget_ngn": 4000
+      },
+      "scores": {
+        "category": true,
+        "location": false,
+        "budget_ngn": false,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_03.wav",
+      "model": "sahara_v2_5",
+      "transcript": "I need rwanda wey go check my pumping machine my budget na 6.\n",
+      "predicted": {
+        "category": "rwanda",
+        "location": "",
+        "budget_ngn": 6.0
+      },
+      "target": {
+        "category": "Rewinder",
+        "location": "Bariga",
+        "budget_ngn": 6000
+      },
+      "scores": {
+        "category": false,
+        "location": false,
+        "budget_ngn": false,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_03.wav",
+      "model": "whisper_large_v3",
+      "transcript": "I need rewind. I will go check my pumping machine. My budget nasiski.",
+      "predicted": {
+        "category": "rewind",
+        "location": "",
+        "budget_ngn": 6000.0
+      },
+      "target": {
+        "category": "Rewinder",
+        "location": "Bariga",
+        "budget_ngn": 6000
+      },
+      "scores": {
+        "category": true,
+        "location": false,
+        "budget_ngn": true,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_03.wav",
+      "model": "mms_1b",
+      "transcript": "i nid rewinder wey go shek my pumping mashine my budget na siskey",
+      "predicted": {
+        "category": "rewinder",
+        "location": "",
+        "budget_ngn": 6000.0
+      },
+      "target": {
+        "category": "Rewinder",
+        "location": "Bariga",
+        "budget_ngn": 6000
+      },
+      "scores": {
+        "category": true,
+        "location": false,
+        "budget_ngn": true,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_04.wav",
+      "model": "sahara_v2_5",
+      "transcript": "Electrician dey around sure light dey full house but my breaker dey trip i get like 5 k for hand\n",
+      "predicted": {
+        "category": "electrician",
+        "location": "",
+        "budget_ngn": 5000.0
+      },
+      "target": {
+        "category": "Electrician",
+        "location": "Surulere",
+        "budget_ngn": 7500
+      },
+      "scores": {
+        "category": true,
+        "location": false,
+        "budget_ngn": false,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_04.wav",
+      "model": "whisper_large_v3",
+      "transcript": "Electric Shandy around 3 Liri, lights day 4 hours, but my breaker the trip. I get like 5K for hand.",
+      "predicted": {
+        "category": "Electrician",
+        "location": "3 Liri",
+        "budget_ngn": 5000.0
+      },
+      "target": {
+        "category": "Electrician",
+        "location": "Surulere",
+        "budget_ngn": 7500
+      },
+      "scores": {
+        "category": true,
+        "location": false,
+        "budget_ngn": false,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_04.wav",
+      "model": "mms_1b",
+      "transcript": "electri shan dey aloung thru lhree lite dey full house but my beake dey trip i get like fife gifoand",
+      "predicted": {
+        "category": "electrician",
+        "location": "Alimosho",
+        "budget_ngn": 5000.0
+      },
+      "target": {
+        "category": "Electrician",
+        "location": "Surulere",
+        "budget_ngn": 7500
+      },
+      "scores": {
+        "category": true,
+        "location": false,
+        "budget_ngn": false,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_05.wav",
+      "model": "sahara_v2_5",
+      "transcript": "Who dey do carpenter around di korodo garage? My kitchen wardrobe don fall i get like 5000 naira to give\n",
+      "predicted": {
+        "category": "carpenter",
+        "location": "korodo garage",
+        "budget_ngn": 5000.0
+      },
+      "target": {
+        "category": "Carpenter",
+        "location": "Ikorodu garage",
+        "budget_ngn": 3000
+      },
+      "scores": {
+        "category": true,
+        "location": false,
+        "budget_ngn": false,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_05.wav",
+      "model": "whisper_large_v3",
+      "transcript": "Who di do capping ka around the Korodo garage? My kitchen wardrobe don't fold. I get like 5,000 naira to give him.",
+      "predicted": {
+        "category": "carpenter",
+        "location": "Korodo garage",
+        "budget_ngn": 5000.0
+      },
+      "target": {
+        "category": "Carpenter",
+        "location": "Ikorodu garage",
+        "budget_ngn": 3000
+      },
+      "scores": {
+        "category": true,
+        "location": false,
+        "budget_ngn": false,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_05.wav",
+      "model": "mms_1b",
+      "transcript": "who de do kappinkaaroun di korodo garrage my kishin wod rope don fall i get like 5 000 nera to gi-am",
+      "predicted": {
+        "category": "carpenter",
+        "location": "korodo garage",
+        "budget_ngn": 5000.0
+      },
+      "target": {
+        "category": "Carpenter",
+        "location": "Ikorodu garage",
+        "budget_ngn": 3000
+      },
+      "scores": {
+        "category": true,
+        "location": false,
+        "budget_ngn": false,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_06.wav",
+      "model": "sahara_v2_5",
+      "transcript": "My generator alternator don burn for 1st tack 1st gait and i need reminder urgently for 8k\n",
+      "predicted": {
+        "category": "generator mechanic",
+        "location": "1st tack 1st gait",
+        "budget_ngn": 8000.0
+      },
+      "target": {
+        "category": "Rewinder",
+        "location": "Festac",
+        "budget_ngn": 8000
+      },
+      "scores": {
+        "category": false,
+        "location": false,
+        "budget_ngn": true,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_06.wav",
+      "model": "whisper_large_v3",
+      "transcript": "My generator alternator don't burn for first stack, first gate and I need to rewind that all gently for 8K.",
+      "predicted": {
+        "category": "generator repairer",
+        "location": "first gate",
+        "budget_ngn": 8000.0
+      },
+      "target": {
+        "category": "Rewinder",
+        "location": "Festac",
+        "budget_ngn": 8000
+      },
+      "scores": {
+        "category": false,
+        "location": false,
+        "budget_ngn": true,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_06.wav",
+      "model": "mms_1b",
+      "transcript": "my generitor olturnetor don born for first tork face gate and i nid reminder urgently for aat key",
+      "predicted": {
+        "category": "generator repairer",
+        "location": "first gate",
+        "budget_ngn": 0.0
+      },
+      "target": {
+        "category": "Rewinder",
+        "location": "Festac",
+        "budget_ngn": 8000
+      },
+      "scores": {
+        "category": false,
+        "location": false,
+        "budget_ngn": false,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_07.wav",
+      "model": "sahara_v2_5",
+      "transcript": "Vocaniser abeg my tire puncture for maryland rada i need quick assistance for 2000 naira abeg\n",
+      "predicted": {
+        "category": "vulcanizer",
+        "location": "Maryland",
+        "budget_ngn": 2000.0
+      },
+      "target": {
+        "category": "Vulcanizer",
+        "location": "Maryland roundabout",
+        "budget_ngn": 2000
+      },
+      "scores": {
+        "category": true,
+        "location": true,
+        "budget_ngn": true,
+        "end_to_end": true
+      }
+    },
+    {
+      "filename": "sample_07.wav",
+      "model": "whisper_large_v3",
+      "transcript": "Rokanaisa abeg. My tire puncture for Maryland ride about. I need quick assistance for 2,000 naira. Abeg.",
+      "predicted": {
+        "category": "vulcanizer",
+        "location": "Maryland",
+        "budget_ngn": 2000.0
+      },
+      "target": {
+        "category": "Vulcanizer",
+        "location": "Maryland roundabout",
+        "budget_ngn": 2000
+      },
+      "scores": {
+        "category": true,
+        "location": true,
+        "budget_ngn": true,
+        "end_to_end": true
+      }
+    },
+    {
+      "filename": "sample_07.wav",
+      "model": "mms_1b",
+      "transcript": "volkanaizor arbeg my tya ponture for mary landrad about i nid kwiek assistance for 1 000 ro arbeg",
+      "predicted": {
+        "category": "vulcanizer",
+        "location": "maryland",
+        "budget_ngn": 1000.0
+      },
+      "target": {
+        "category": "Vulcanizer",
+        "location": "Maryland roundabout",
+        "budget_ngn": 2000
+      },
+      "scores": {
+        "category": true,
+        "location": true,
+        "budget_ngn": false,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_08.wav",
+      "model": "sahara_v2_5",
+      "transcript": "I dey lecky face one ac dey blow hot air mechanic call across 10000 naira\n",
+      "predicted": {
+        "category": "mechanic",
+        "location": "Lekki",
+        "budget_ngn": 10000.0
+      },
+      "target": {
+        "category": "AC repairer",
+        "location": "Lekki phase 1",
+        "budget_ngn": 10000
+      },
+      "scores": {
+        "category": false,
+        "location": true,
+        "budget_ngn": true,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_08.wav",
+      "model": "whisper_large_v3",
+      "transcript": "ID Lucky Fish 1 ACD Blue Oats Air Mechanical AC Repairer for 10,000 Naira",
+      "predicted": {
+        "category": "AC Repairer",
+        "location": "",
+        "budget_ngn": 10000.0
+      },
+      "target": {
+        "category": "AC repairer",
+        "location": "Lekki phase 1",
+        "budget_ngn": 10000
+      },
+      "scores": {
+        "category": true,
+        "location": false,
+        "budget_ngn": true,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_08.wav",
+      "model": "mms_1b",
+      "transcript": "i dey lekeifese 1ne acede bluw at a mekanik al ise reparer for 10 000 ero",
+      "predicted": {
+        "category": "mekanik",
+        "location": "lekeifese",
+        "budget_ngn": 10000.0
+      },
+      "target": {
+        "category": "AC repairer",
+        "location": "Lekki phase 1",
+        "budget_ngn": 10000
+      },
+      "scores": {
+        "category": false,
+        "location": false,
+        "budget_ngn": true,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_09.wav",
+      "model": "sahara_v2_5",
+      "transcript": "Make peter come paint one room for me paint dey ground ready labor na 5k\n",
+      "predicted": {
+        "category": "painter",
+        "location": "",
+        "budget_ngn": 5000.0
+      },
+      "target": {
+        "category": "Painter",
+        "location": "Ogba",
+        "budget_ngn": 5000
+      },
+      "scores": {
+        "category": true,
+        "location": false,
+        "budget_ngn": true,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_09.wav",
+      "model": "whisper_large_v3",
+      "transcript": "May Peter come paint one room for me. Paint the ground already, live on a 5K.",
+      "predicted": {
+        "category": "painter",
+        "location": "",
+        "budget_ngn": 5000.0
+      },
+      "target": {
+        "category": "Painter",
+        "location": "Ogba",
+        "budget_ngn": 5000
+      },
+      "scores": {
+        "category": true,
+        "location": false,
+        "budget_ngn": true,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_09.wav",
+      "model": "mms_1b",
+      "transcript": "make pita kon pint one room for mi pint dey ground ared di liborna fiv key",
+      "predicted": {
+        "category": "painter",
+        "location": "",
+        "budget_ngn": 5000.0
+      },
+      "target": {
+        "category": "Painter",
+        "location": "Ogba",
+        "budget_ngn": 5000
+      },
+      "scores": {
+        "category": true,
+        "location": false,
+        "budget_ngn": true,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_10.wav",
+      "model": "sahara_v2_5",
+      "transcript": "Panemita needed for oshodi bus stop motor crash side afik 12k\n",
+      "predicted": {
+        "category": "Panemita",
+        "location": "oshodi bus stop motor crash side",
+        "budget_ngn": 12000.0
+      },
+      "target": {
+        "category": "Panel beater",
+        "location": "Oshodi bus stop",
+        "budget_ngn": 12000
+      },
+      "scores": {
+        "category": false,
+        "location": true,
+        "budget_ngn": true,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_10.wav",
+      "model": "whisper_large_v3",
+      "transcript": "Panebita anided fwo osho di bus stop. Motos crash side afipi 2FK.",
+      "predicted": {
+        "category": "Panebita",
+        "location": "osho di bus stop",
+        "budget_ngn": 2000.0
+      },
+      "target": {
+        "category": "Panel beater",
+        "location": "Oshodi bus stop",
+        "budget_ngn": 12000
+      },
+      "scores": {
+        "category": false,
+        "location": false,
+        "budget_ngn": false,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_10.wav",
+      "model": "mms_1b",
+      "transcript": "panebita nieded for hosho di bostob mutus cratsh side afi pitrefke",
+      "predicted": {
+        "category": "panebita",
+        "location": "cratsh side afi pitrefke",
+        "budget_ngn": 0.0
+      },
+      "target": {
+        "category": "Panel beater",
+        "location": "Oshodi bus stop",
+        "budget_ngn": 12000
+      },
+      "scores": {
+        "category": false,
+        "location": false,
+        "budget_ngn": false,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_11.wav",
+      "model": "sahara_v2_5",
+      "transcript": "Welder dey dis area iron gate in don cut for Uju lego 4500 naira dey\n",
+      "predicted": {
+        "category": "welder",
+        "location": "Uju",
+        "budget_ngn": 4500.0
+      },
+      "target": {
+        "category": "Welder",
+        "location": "Ojuelegba",
+        "budget_ngn": 4500
+      },
+      "scores": {
+        "category": true,
+        "location": false,
+        "budget_ngn": true,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_11.wav",
+      "model": "whisper_large_v3",
+      "transcript": "Wè dà dè dì dì sè wè, a yon gè tì ndòn kòt fò o djù e lèk bà wù, 4,500 nè rà dè.",
+      "predicted": {
+        "category": "court",
+        "location": "lekki",
+        "budget_ngn": 4500.0
+      },
+      "target": {
+        "category": "Welder",
+        "location": "Ojuelegba",
+        "budget_ngn": 4500
+      },
+      "scores": {
+        "category": false,
+        "location": false,
+        "budget_ngn": true,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_11.wav",
+      "model": "mms_1b",
+      "transcript": "welda dey dis aria iongate eng don kut for jwele bao 4 0005 hdrd nera day",
+      "predicted": {
+        "category": "welder",
+        "location": "Ijegate",
+        "budget_ngn": 4500.0
+      },
+      "target": {
+        "category": "Welder",
+        "location": "Ojuelegba",
+        "budget_ngn": 4500
+      },
+      "scores": {
+        "category": true,
+        "location": false,
+        "budget_ngn": true,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_12.wav",
+      "model": "sahara_v2_5",
+      "transcript": "Plumber abeg come fix my WC sink for ojuju water dey leak for everywhere i get 5000 naira\n",
+      "predicted": {
+        "category": "plumber",
+        "location": "ojuju",
+        "budget_ngn": 5000.0
+      },
+      "target": {
+        "category": "Plumber",
+        "location": "Ilupeju",
+        "budget_ngn": 5000
+      },
+      "scores": {
+        "category": true,
+        "location": false,
+        "budget_ngn": true,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_12.wav",
+      "model": "whisper_large_v3",
+      "transcript": "Plumba abe konfis my WC sing for Lugbeju. Wata de lik for eviwe. I get 5,000 nera.",
+      "predicted": {
+        "category": "Plumber",
+        "location": "Lugbeju",
+        "budget_ngn": 5000.0
+      },
+      "target": {
+        "category": "Plumber",
+        "location": "Ilupeju",
+        "budget_ngn": 5000
+      },
+      "scores": {
+        "category": true,
+        "location": false,
+        "budget_ngn": true,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_12.wav",
+      "model": "mms_1b",
+      "transcript": "plomba abel kon fix my duce sing for lukwe ju wota dey leak for evrywhere i get 5 000 ero",
+      "predicted": {
+        "category": "plomba",
+        "location": "lukwe",
+        "budget_ngn": 5000.0
+      },
+      "target": {
+        "category": "Plumber",
+        "location": "Ilupeju",
+        "budget_ngn": 5000
+      },
+      "scores": {
+        "category": false,
+        "location": false,
+        "budget_ngn": true,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_13.wav",
+      "model": "sahara_v2_5",
+      "transcript": "Generator rwanda needed for victoria island starter quil don bad 15k available\n",
+      "predicted": {
+        "category": "generator repairer",
+        "location": "victoria island",
+        "budget_ngn": 15000.0
+      },
+      "target": {
+        "category": "Rewinder",
+        "location": "Victoria Island",
+        "budget_ngn": 15000
+      },
+      "scores": {
+        "category": false,
+        "location": true,
+        "budget_ngn": true,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_13.wav",
+      "model": "whisper_large_v3",
+      "transcript": "Generator rewinder needed for Vidoria Island. Starter coil done bad. 15K available.",
+      "predicted": {
+        "category": "Generator rewinder",
+        "location": "Victoria Island",
+        "budget_ngn": 15000.0
+      },
+      "target": {
+        "category": "Rewinder",
+        "location": "Victoria Island",
+        "budget_ngn": 15000
+      },
+      "scores": {
+        "category": true,
+        "location": true,
+        "budget_ngn": true,
+        "end_to_end": true
+      }
+    },
+    {
+      "filename": "sample_13.wav",
+      "model": "mms_1b",
+      "transcript": "generator rewaidar nieded for vitoria island startakwel don bad fifteen kay availabol",
+      "predicted": {
+        "category": "generator repairer",
+        "location": "Victoria Island",
+        "budget_ngn": 15000.0
+      },
+      "target": {
+        "category": "Rewinder",
+        "location": "Victoria Island",
+        "budget_ngn": 15000
+      },
+      "scores": {
+        "category": false,
+        "location": true,
+        "budget_ngn": true,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_14.wav",
+      "model": "sahara_v2_5",
+      "transcript": "My ceiling farm motor dey make heavy noise for machine electrician abeg 3500\n",
+      "predicted": {
+        "category": "machine electrician",
+        "location": "",
+        "budget_ngn": 3500.0
+      },
+      "target": {
+        "category": "Electrician",
+        "location": "Mushin",
+        "budget_ngn": 3500
+      },
+      "scores": {
+        "category": true,
+        "location": false,
+        "budget_ngn": true,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_14.wav",
+      "model": "whisper_large_v3",
+      "transcript": "My ceiling fan motor, they make heavy noise for motion. Electrician, I beg, 3,500.",
+      "predicted": {
+        "category": "electrician",
+        "location": "",
+        "budget_ngn": 3500.0
+      },
+      "target": {
+        "category": "Electrician",
+        "location": "Mushin",
+        "budget_ngn": 3500
+      },
+      "scores": {
+        "category": true,
+        "location": false,
+        "budget_ngn": true,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_14.wav",
+      "model": "mms_1b",
+      "transcript": "my silin fan otor dey make heavy nois for moshi electrisha nabeg 10005 hundred",
+      "predicted": {
+        "category": "electrician",
+        "location": "Mushin",
+        "budget_ngn": 10500.0
+      },
+      "target": {
+        "category": "Electrician",
+        "location": "Mushin",
+        "budget_ngn": 3500
+      },
+      "scores": {
+        "category": true,
+        "location": true,
+        "budget_ngn": false,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_15.wav",
+      "model": "sahara_v2_5",
+      "transcript": "I need brick layer to pass small sucker wey crack for age I go pay 6000 naira\n",
+      "predicted": {
+        "category": "brick layer",
+        "location": "age",
+        "budget_ngn": 6000.0
+      },
+      "target": {
+        "category": "Bricklayer",
+        "location": "Agege",
+        "budget_ngn": 6000
+      },
+      "scores": {
+        "category": false,
+        "location": true,
+        "budget_ngn": true,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_15.wav",
+      "model": "whisper_large_v3",
+      "transcript": "I need bricklayer to pass more soccer with craft for a giggy. I go pay 6,000 naira.",
+      "predicted": {
+        "category": "bricklayer",
+        "location": "",
+        "budget_ngn": 6000.0
+      },
+      "target": {
+        "category": "Bricklayer",
+        "location": "Agege",
+        "budget_ngn": 6000
+      },
+      "scores": {
+        "category": true,
+        "location": false,
+        "budget_ngn": true,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_15.wav",
+      "model": "mms_1b",
+      "transcript": "i nid briklayer to pass moll-soka wey crap for agegey i go pay sx 0a0 nera",
+      "predicted": {
+        "category": "briklayer",
+        "location": "agegey",
+        "budget_ngn": 6000.0
+      },
+      "target": {
+        "category": "Bricklayer",
+        "location": "Agege",
+        "budget_ngn": 6000
+      },
+      "scores": {
+        "category": false,
+        "location": true,
+        "budget_ngn": true,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_16.wav",
+      "model": "sahara_v2_5",
+      "transcript": "Car no wan start for gagada expressway mechanic come with your jumper wire 4k day\n",
+      "predicted": {
+        "category": "mechanic",
+        "location": "gbagada",
+        "budget_ngn": 4000.0
+      },
+      "target": {
+        "category": "Mechanic",
+        "location": "Gbagada expressway",
+        "budget_ngn": 4000
+      },
+      "scores": {
+        "category": true,
+        "location": true,
+        "budget_ngn": true,
+        "end_to_end": true
+      }
+    },
+    {
+      "filename": "sample_16.wav",
+      "model": "whisper_large_v3",
+      "transcript": "Kanu 1 start for Bagada Expressway. Mechanic come with your jumper wire 4KD.",
+      "predicted": {
+        "category": "mechanic",
+        "location": "Bariga Expressway",
+        "budget_ngn": 4000.0
+      },
+      "target": {
+        "category": "Mechanic",
+        "location": "Gbagada expressway",
+        "budget_ngn": 4000
+      },
+      "scores": {
+        "category": true,
+        "location": false,
+        "budget_ngn": true,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_16.wav",
+      "model": "mms_1b",
+      "transcript": "kano on start for gba-gada espress wey mekanik kom with yor jum pawa ya for k day",
+      "predicted": {
+        "category": "mekanik",
+        "location": "gba-gada",
+        "budget_ngn": 0.0
+      },
+      "target": {
+        "category": "Mechanic",
+        "location": "Gbagada expressway",
+        "budget_ngn": 4000
+      },
+      "scores": {
+        "category": false,
+        "location": false,
+        "budget_ngn": false,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_17.wav",
+      "model": "sahara_v2_5",
+      "transcript": "Capital needed to fix our 4 office chairs for Marina Lagos Island budget na 8000\n",
+      "predicted": {
+        "category": "chair repairer",
+        "location": "Marina Lagos Island",
+        "budget_ngn": 8000.0
+      },
+      "target": {
+        "category": "Carpenter",
+        "location": "Marina",
+        "budget_ngn": 8000
+      },
+      "scores": {
+        "category": false,
+        "location": true,
+        "budget_ngn": true,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_17.wav",
+      "model": "whisper_large_v3",
+      "transcript": "Kapita needed to fix our four office chairs for Marina Lagos Island. Budget na 8,000.",
+      "predicted": {
+        "category": "carpenter",
+        "location": "Marina Lagos Island",
+        "budget_ngn": 8000.0
+      },
+      "target": {
+        "category": "Carpenter",
+        "location": "Marina",
+        "budget_ngn": 8000
+      },
+      "scores": {
+        "category": true,
+        "location": true,
+        "budget_ngn": true,
+        "end_to_end": true
+      }
+    },
+    {
+      "filename": "sample_17.wav",
+      "model": "mms_1b",
+      "transcript": "karpita nided to fix awa for office shairs for marina lia gus island budget na 1 000",
+      "predicted": {
+        "category": "carpenter",
+        "location": "Marina Lagos Island",
+        "budget_ngn": 1000.0
+      },
+      "target": {
+        "category": "Carpenter",
+        "location": "Marina",
+        "budget_ngn": 8000
+      },
+      "scores": {
+        "category": true,
+        "location": true,
+        "budget_ngn": false,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_18.wav",
+      "model": "sahara_v2_5",
+      "transcript": "Rufa abeg come check my leaking zinc roof for K2 rain dey enter parlour I get 9000\n",
+      "predicted": {
+        "category": "roof repairer",
+        "location": "K2",
+        "budget_ngn": 9000.0
+      },
+      "target": {
+        "category": "Roofer",
+        "location": "Ketu",
+        "budget_ngn": 9000
+      },
+      "scores": {
+        "category": false,
+        "location": false,
+        "budget_ngn": true,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_18.wav",
+      "model": "whisper_large_v3",
+      "transcript": "Rufa, I beg, come check my leaking zinc roof for K2. Rain the entire pallor, I get 9,000.",
+      "predicted": {
+        "category": "roofer",
+        "location": "K2",
+        "budget_ngn": 9000.0
+      },
+      "target": {
+        "category": "Roofer",
+        "location": "Ketu",
+        "budget_ngn": 9000
+      },
+      "scores": {
+        "category": true,
+        "location": false,
+        "budget_ngn": true,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_18.wav",
+      "model": "mms_1b",
+      "transcript": "rufar abeg kon shek my leking zinkruv for kitru reang di enter palo i get 1 000",
+      "predicted": {
+        "category": "roofer",
+        "location": "lekki",
+        "budget_ngn": 1000.0
+      },
+      "target": {
+        "category": "Roofer",
+        "location": "Ketu",
+        "budget_ngn": 9000
+      },
+      "scores": {
+        "category": true,
+        "location": false,
+        "budget_ngn": false,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_19.wav",
+      "model": "sahara_v2_5",
+      "transcript": "Make tailor come so five school uniforms for Egbeda material don dey ready na 7000 I go pay\n",
+      "predicted": {
+        "category": "tailor",
+        "location": "Egbeda",
+        "budget_ngn": 7000.0
+      },
+      "target": {
+        "category": "Tailor",
+        "location": "Egbeda",
+        "budget_ngn": 7000
+      },
+      "scores": {
+        "category": true,
+        "location": true,
+        "budget_ngn": true,
+        "end_to_end": true
+      }
+    },
+    {
+      "filename": "sample_19.wav",
+      "model": "whisper_large_v3",
+      "transcript": "Mik te lo kom so fai sku uniform sfo ekbeda. Material don dey ready na 7,000 na go pe.",
+      "predicted": {
+        "category": "tailor",
+        "location": "ebute metta",
+        "budget_ngn": 7000.0
+      },
+      "target": {
+        "category": "Tailor",
+        "location": "Egbeda",
+        "budget_ngn": 7000
+      },
+      "scores": {
+        "category": true,
+        "location": false,
+        "budget_ngn": true,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_19.wav",
+      "model": "mms_1b",
+      "transcript": "mike telo kom sofi skhoo uniforms for eg beda matrial don dey ready na 7 000 a go pay",
+      "predicted": {
+        "category": "tailor",
+        "location": "Egbeda",
+        "budget_ngn": 7000.0
+      },
+      "target": {
+        "category": "Tailor",
+        "location": "Egbeda",
+        "budget_ngn": 7000
+      },
+      "scores": {
+        "category": true,
+        "location": true,
+        "budget_ngn": true,
+        "end_to_end": true
+      }
+    },
+    {
+      "filename": "sample_20.wav",
+      "model": "sahara_v2_5",
+      "transcript": "Free repair needed for beggar my freezer no dey work again 11000 dey ground\n",
+      "predicted": {
+        "category": "refrigerator repairer",
+        "location": "",
+        "budget_ngn": 11000.0
+      },
+      "target": {
+        "category": "Fridge repairer",
+        "location": "Berger",
+        "budget_ngn": 11000
+      },
+      "scores": {
+        "category": false,
+        "location": false,
+        "budget_ngn": true,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_20.wav",
+      "model": "whisper_large_v3",
+      "transcript": "Food repair are needed for beggar. My freezer know they work again. 11,000 day ground.",
+      "predicted": {
+        "category": "refrigerator repair",
+        "location": "",
+        "budget_ngn": 11000.0
+      },
+      "target": {
+        "category": "Fridge repairer",
+        "location": "Berger",
+        "budget_ngn": 11000
+      },
+      "scores": {
+        "category": false,
+        "location": false,
+        "budget_ngn": true,
+        "end_to_end": false
+      }
+    },
+    {
+      "filename": "sample_20.wav",
+      "model": "mms_1b",
+      "transcript": "fried repaira nieded for bega ga my frees ano dey work again 11 000 day ground",
+      "predicted": {
+        "category": "repairer",
+        "location": "",
+        "budget_ngn": 11000.0
+      },
+      "target": {
+        "category": "Fridge repairer",
+        "location": "Berger",
+        "budget_ngn": 11000
+      },
+      "scores": {
+        "category": true,
+        "location": false,
+        "budget_ngn": true,
+        "end_to_end": false
+      }
+    }
+  ],
+  "ground_truth": [
+    {
+      "filename": "sample_01.wav",
+      "transcript": "Abeg I dey Ikeja underbridge now, my brake dey sound, I need mechanic for 5k.",
+      "target": {
+        "category": "Mechanic",
+        "location": "Ikeja underbridge",
+        "budget_ngn": 5000
+      }
+    },
+    {
+      "filename": "sample_02.wav",
+      "transcript": "My kitchen pipe don burst for Yaba tech side, make plumber come fast fast, I get 4000 naira.",
+      "target": {
+        "category": "Plumber",
+        "location": "Yaba",
+        "budget_ngn": 4000
+      }
+    },
+    {
+      "filename": "sample_03.wav",
+      "transcript": "I need rewinder wey go check my pumping machine for Bariga, my budget na 6k.",
+      "target": {
+        "category": "Rewinder",
+        "location": "Bariga",
+        "budget_ngn": 6000
+      }
+    },
+    {
+      "filename": "sample_04.wav",
+      "transcript": "Electrician dey around Surulere? Light full house but my breaker dey trip, I go pay 7500.",
+      "target": {
+        "category": "Electrician",
+        "location": "Surulere",
+        "budget_ngn": 7500
+      }
+    },
+    {
+      "filename": "sample_05.wav",
+      "transcript": "Who dey do carpentry around Ikorodu garage? My wardrobe door don pull out, 3000 dey ground.",
+      "target": {
+        "category": "Carpenter",
+        "location": "Ikorodu garage",
+        "budget_ngn": 3000
+      }
+    },
+    {
+      "filename": "sample_06.wav",
+      "transcript": "My generator alternator don burn for Festac first gate, I need rewinder urgently for 8k.",
+      "target": {
+        "category": "Rewinder",
+        "location": "Festac",
+        "budget_ngn": 8000
+      }
+    },
+    {
+      "filename": "sample_07.wav",
+      "transcript": "Vulcanizer abeg, my tyre puncture for Maryland roundabout, quick assistance for 2000 naira.",
+      "target": {
+        "category": "Vulcanizer",
+        "location": "Maryland roundabout",
+        "budget_ngn": 2000
+      }
+    },
+    {
+      "filename": "sample_08.wav",
+      "transcript": "I dey Lekki phase 1, AC dey blow hot air, mechanic or AC repairer abeg for 10000 naira.",
+      "target": {
+        "category": "AC repairer",
+        "location": "Lekki phase 1",
+        "budget_ngn": 10000
+      }
+    },
+    {
+      "filename": "sample_09.wav",
+      "transcript": "Make painter come paint one room for Ogba, paint dey ground already, labor na 5k.",
+      "target": {
+        "category": "Painter",
+        "location": "Ogba",
+        "budget_ngn": 5000
+      }
+    },
+    {
+      "filename": "sample_10.wav",
+      "transcript": "Panel beater needed for Oshodi bus stop, moto scratch side, I fit pay 12k.",
+      "target": {
+        "category": "Panel beater",
+        "location": "Oshodi bus stop",
+        "budget_ngn": 12000
+      }
+    },
+    {
+      "filename": "sample_11.wav",
+      "transcript": "Welder dey this area? Iron gate hinge don cut for Ojuelegba, 4500 naira dey.",
+      "target": {
+        "category": "Welder",
+        "location": "Ojuelegba",
+        "budget_ngn": 4500
+      }
+    },
+    {
+      "filename": "sample_12.wav",
+      "transcript": "Plumber abeg come fix my WC sink for Ilupeju, water dey leak everywhere, I get 5000.",
+      "target": {
+        "category": "Plumber",
+        "location": "Ilupeju",
+        "budget_ngn": 5000
+      }
+    },
+    {
+      "filename": "sample_13.wav",
+      "transcript": "Generator rewinder needed for Victoria Island, starter coil don bad, 15k available.",
+      "target": {
+        "category": "Rewinder",
+        "location": "Victoria Island",
+        "budget_ngn": 15000
+      }
+    },
+    {
+      "filename": "sample_14.wav",
+      "transcript": "My ceiling fan motor dey make heavy noise for Mushin, electrician abeg, 3500.",
+      "target": {
+        "category": "Electrician",
+        "location": "Mushin",
+        "budget_ngn": 3500
+      }
+    },
+    {
+      "filename": "sample_15.wav",
+      "transcript": "I need bricklayer to patch small soakaway crack for Agege, I go pay 6000 naira.",
+      "target": {
+        "category": "Bricklayer",
+        "location": "Agege",
+        "budget_ngn": 6000
+      }
+    },
+    {
+      "filename": "sample_16.wav",
+      "transcript": "Car no wan start for Gbagada expressway, mechanic come with jumper wire, 4k dey.",
+      "target": {
+        "category": "Mechanic",
+        "location": "Gbagada expressway",
+        "budget_ngn": 4000
+      }
+    },
+    {
+      "filename": "sample_17.wav",
+      "transcript": "Carpenter needed to fix four office chairs for Marina Lagos island, budget na 8000.",
+      "target": {
+        "category": "Carpenter",
+        "location": "Marina",
+        "budget_ngn": 8000
+      }
+    },
+    {
+      "filename": "sample_18.wav",
+      "transcript": "Roofer abeg come check my leaking zinc roof for Ketu, rain dey enter parlour, I get 9000.",
+      "target": {
+        "category": "Roofer",
+        "location": "Ketu",
+        "budget_ngn": 9000
+      }
+    },
+    {
+      "filename": "sample_19.wav",
+      "transcript": "Make tailor come sew five school uniform for Egbeda, material don buy already, na 7000 I go pay.",
+      "target": {
+        "category": "Tailor",
+        "location": "Egbeda",
+        "budget_ngn": 7000
+      }
+    },
+    {
+      "filename": "sample_20.wav",
+      "transcript": "Fridge repairer needed for Berger, my freezer no dey freeze again, 11000 dey ground.",
+      "target": {
+        "category": "Fridge repairer",
+        "location": "Berger",
+        "budget_ngn": 11000
+      }
+    }
+  ]
+}
