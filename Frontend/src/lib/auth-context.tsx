@@ -75,6 +75,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const [isInitialized, setIsInitialized] = useState(false);
+
   useEffect(() => {
     if (typeof window === "undefined") return;
     const storedToken = window.localStorage.getItem("token");
@@ -87,13 +89,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(defaultUser);
       }
     }
+    setIsInitialized(true);
     setIsLoading(false);
   }, []);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined" || !isInitialized) return;
     if (user) window.localStorage.setItem("areahustle-demo-user", JSON.stringify(user));
-  }, [user]);
+  }, [user, isInitialized]);
 
   const login = async (data: any) => {
     const authResult = await api.login(data);
