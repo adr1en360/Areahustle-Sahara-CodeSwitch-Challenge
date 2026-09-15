@@ -59,7 +59,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [voiceOpen, setVoiceOpen] = useState(false);
   const [jobs, setJobs] = useState<PostedJob[]>([]);
 
-  const syncDemoState = (u: any) => ({ ...defaultUser, ...u });
+  const syncDemoState = (u: any) => {
+    const role = u?.role || defaultUser.role;
+    let balance = u?.wallet_balance;
+    if (typeof window !== "undefined") {
+      const savedBalance = window.localStorage.getItem(`${role}-wallet`);
+      if (savedBalance) balance = Number(savedBalance);
+    }
+    return { ...defaultUser, ...u, wallet_balance: balance ?? (role === "customer" ? 60000 : 24500) };
+  };
 
   const refreshUser = async () => {
     if (typeof window === "undefined") return;
@@ -101,13 +109,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (data: any) => {
     const authResult = await api.login(data);
     const role = authResult?.role || data?.role || (String(data?.username ?? "").includes("customer") ? "customer" : "hustler");
+    let balance = role === "customer" ? 60000 : 24500;
+    if (typeof window !== "undefined") {
+      const savedBalance = window.localStorage.getItem(`${role}-wallet`);
+      if (savedBalance) balance = Number(savedBalance);
+      else window.localStorage.setItem(`${role}-wallet`, String(balance));
+    }
+
     const nextUser = syncDemoState({
       ...defaultUser,
       role,
       id: authResult?.user_id ?? defaultUser.id,
-      email: data?.email ?? data?.username ?? defaultUser.email,
-      name: data?.name ?? (data?.username ? data.username.split("@")[0] : defaultUser.name),
-      wallet_balance: role === "customer" ? 60000 : 24500,
+      email: data?.email ?? defaultUser.email,
+      name: data?.name ?? defaultUser.name,
+      wallet_balance: balance,
       trust_score: role === "customer" ? 0 : 820,
     });
 
@@ -123,13 +138,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const register = async (data: any) => {
     const authResult = await api.register(data);
     const role = authResult?.role || data?.role || "customer";
+    
+    let balance = role === "customer" ? 60000 : 24500;
+    if (typeof window !== "undefined") {
+      const savedBalance = window.localStorage.getItem(`${role}-wallet`);
+      if (savedBalance) balance = Number(savedBalance);
+      else window.localStorage.setItem(`${role}-wallet`, String(balance));
+    }
+
     const nextUser = syncDemoState({
       ...defaultUser,
       role,
       id: authResult?.id ?? defaultUser.id,
       email: data?.email ?? defaultUser.email,
       name: data?.name ?? defaultUser.name,
-      wallet_balance: role === "customer" ? 60000 : 24500,
+      wallet_balance: balance,
       trust_score: role === "customer" ? 0 : 820,
     });
 
@@ -153,12 +176,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const updateDemoBalance = async (role: string, amount: number) => {
+    if (typeof window !== "undefined") {
+      const savedBalance = window.localStorage.getItem(`${role}-wallet`);
+      const currentBalance = savedBalance ? Number(savedBalance) : (role === "customer" ? 60000 : 24500);
+      const nextBalance = Math.max(0, currentBalance + amount);
+      window.localStorage.setItem(`${role}-wallet`, String(nextBalance));
+    }
     setUser((current: any) => {
-      if (!current) return current;
-      const next = {
-        ...current,
-        wallet_balance: Math.max(0, Number(current.wallet_balance ?? 0) + Number(amount ?? 0)),
-      };
+      if (!current || current.role !== role) return current;
+      const next = { ...current, wallet_balance: Math.max(0, Number(current.wallet_balance ?? 0) + Number(amount ?? 0)) };
       if (typeof window !== "undefined") window.localStorage.setItem("areahustle-demo-user", JSON.stringify(next));
       return next;
     });

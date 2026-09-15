@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState, useRef } from "react";
 import { useAuth } from "@/lib/auth-context";
@@ -8,7 +8,7 @@ import { MapPin, Lock, Phone, CheckCircle, Search, Mic, X } from "lucide-react";
 import { toast } from "sonner";
 
 function Jobs() {
-  const { isLoggedIn, isLoading: authLoading, userRole, user } = useAuth();
+  const { isLoggedIn, isLoading: authLoading, userRole, user, updateDemoBalance } = useAuth();
   const [tab, setTab] = useState<"market" | "my-gigs">("market");
   const [keyword, setKeyword] = useState("");
   const [location, setLocation] = useState("");
@@ -77,6 +77,10 @@ function Jobs() {
   const handleAccept = async (id: string) => {
     setIsActionLoading(id);
     try {
+      const job = marketJobs.find(j => String(j.id) === String(id));
+      if (job) {
+        updateDemoBalance("customer", -Number(job.budget));
+      }
       await api.matchTask(id);
       toast.success("Job accepted! Contact details unlocked.");
       setTab("my-gigs");
