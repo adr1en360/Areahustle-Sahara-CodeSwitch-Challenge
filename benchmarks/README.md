@@ -6,6 +6,8 @@ All model inference runs on Google Colab. The three STT models and the scoring n
 
 One clip, one name, everywhere. Recording number 11 is `sample_11.wav` in `audio/`, in `dataset.json`, and in the Colab notebook. Friends can send their recordings under any filename as long as it contains the sample number (`Note007.m4a`, `clip 11.wav`); `convert_audio.py` picks out the first number it finds and renames the file to `sample_NN.wav`.
 
+The notebook never reads the number in a filename. It maps uploaded files to samples alphabetically: the first file in sort order becomes `sample_01`, the second `sample_02`, and so on. The zero-padded `sample_NN` names are what keep file order equal to sample order.
+
 ## The Files
 
 | File | What it is | What it does |
