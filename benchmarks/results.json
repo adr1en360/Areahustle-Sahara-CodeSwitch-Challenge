@@ -32,31 +32,31 @@
   "aggregate": {
     "sahara_v2_5": {
       "model_name": "Intron Sahara v2.5",
-      "wer_pct": 33.9,
-      "cer_pct": 18.9,
+      "wer_pct": 26.6,
+      "cer_pct": 12.9,
       "category_accuracy_pct": 55.0,
       "location_accuracy_pct": 40.0,
-      "budget_accuracy_pct": 80.0,
+      "budget_accuracy_pct": 95.0,
       "end_to_end_success_pct": 15.0,
       "n_samples": 20
     },
     "whisper_large_v3": {
       "model_name": "OpenAI Whisper Large-v3",
-      "wer_pct": 67.6,
-      "cer_pct": 30.2,
+      "wer_pct": 59.7,
+      "cer_pct": 24.0,
       "category_accuracy_pct": 80.0,
       "location_accuracy_pct": 20.0,
-      "budget_accuracy_pct": 80.0,
+      "budget_accuracy_pct": 95.0,
       "end_to_end_success_pct": 20.0,
       "n_samples": 20
     },
     "mms_1b": {
       "model_name": "Meta MMS-1B",
-      "wer_pct": 79.9,
-      "cer_pct": 36.2,
+      "wer_pct": 75.7,
+      "cer_pct": 31.7,
       "category_accuracy_pct": 60.0,
       "location_accuracy_pct": 30.0,
-      "budget_accuracy_pct": 50.0,
+      "budget_accuracy_pct": 65.0,
       "end_to_end_success_pct": 5.0,
       "n_samples": 20
     }
@@ -136,13 +136,13 @@
       },
       "target": {
         "category": "Plumber",
-        "location": "Yaba",
-        "budget_ngn": 4000
+        "location": "",
+        "budget_ngn": 5000
       },
       "scores": {
         "category": true,
         "location": false,
-        "budget_ngn": false,
+        "budget_ngn": true,
         "end_to_end": false
       }
     },
@@ -157,13 +157,13 @@
       },
       "target": {
         "category": "Plumber",
-        "location": "Yaba",
-        "budget_ngn": 4000
+        "location": "",
+        "budget_ngn": 5000
       },
       "scores": {
         "category": true,
         "location": false,
-        "budget_ngn": false,
+        "budget_ngn": true,
         "end_to_end": false
       }
     },
@@ -178,13 +178,13 @@
       },
       "target": {
         "category": "Plumber",
-        "location": "Yaba",
-        "budget_ngn": 4000
+        "location": "",
+        "budget_ngn": 5000
       },
       "scores": {
         "category": true,
         "location": false,
-        "budget_ngn": false,
+        "budget_ngn": true,
         "end_to_end": false
       }
     },
@@ -199,7 +199,7 @@
       },
       "target": {
         "category": "Rewinder",
-        "location": "Bariga",
+        "location": "",
         "budget_ngn": 6000
       },
       "scores": {
@@ -220,7 +220,7 @@
       },
       "target": {
         "category": "Rewinder",
-        "location": "Bariga",
+        "location": "",
         "budget_ngn": 6000
       },
       "scores": {
@@ -241,7 +241,7 @@
       },
       "target": {
         "category": "Rewinder",
-        "location": "Bariga",
+        "location": "",
         "budget_ngn": 6000
       },
       "scores": {
@@ -263,12 +263,12 @@
       "target": {
         "category": "Electrician",
         "location": "Surulere",
-        "budget_ngn": 7500
+        "budget_ngn": 5000
       },
       "scores": {
         "category": true,
         "location": false,
-        "budget_ngn": false,
+        "budget_ngn": true,
         "end_to_end": false
       }
     },
@@ -284,12 +284,12 @@
       "target": {
         "category": "Electrician",
         "location": "Surulere",
-        "budget_ngn": 7500
+        "budget_ngn": 5000
       },
       "scores": {
         "category": true,
         "location": false,
-        "budget_ngn": false,
+        "budget_ngn": true,
         "end_to_end": false
       }
     },
@@ -305,12 +305,12 @@
       "target": {
         "category": "Electrician",
         "location": "Surulere",
-        "budget_ngn": 7500
+        "budget_ngn": 5000
       },
       "scores": {
         "category": true,
         "location": false,
-        "budget_ngn": false,
+        "budget_ngn": true,
         "end_to_end": false
       }
     },
@@ -326,12 +326,12 @@
       "target": {
         "category": "Carpenter",
         "location": "Ikorodu garage",
-        "budget_ngn": 3000
+        "budget_ngn": 5000
       },
       "scores": {
         "category": true,
         "location": false,
-        "budget_ngn": false,
+        "budget_ngn": true,
         "end_to_end": false
       }
     },
@@ -347,12 +347,12 @@
       "target": {
         "category": "Carpenter",
         "location": "Ikorodu garage",
-        "budget_ngn": 3000
+        "budget_ngn": 5000
       },
       "scores": {
         "category": true,
         "location": false,
-        "budget_ngn": false,
+        "budget_ngn": true,
         "end_to_end": false
       }
     },
@@ -368,12 +368,12 @@
       "target": {
         "category": "Carpenter",
         "location": "Ikorodu garage",
-        "budget_ngn": 3000
+        "budget_ngn": 5000
       },
       "scores": {
         "category": true,
         "location": false,
-        "budget_ngn": false,
+        "budget_ngn": true,
         "end_to_end": false
       }
     },
@@ -1326,7 +1326,7 @@
   "ground_truth": [
     {
       "filename": "sample_01.wav",
-      "transcript": "Abeg I dey Ikeja underbridge now, my brake dey sound, I need mechanic for 5k.",
+      "transcript": "I dey Ikeja underbridge, my brake dey sound, I need mechanic for 5k.",
       "target": {
         "category": "Mechanic",
         "location": "Ikeja underbridge",
@@ -1335,38 +1335,38 @@
     },
     {
       "filename": "sample_02.wav",
-      "transcript": "My kitchen pipe don burst for Yaba tech side, make plumber come fast fast, I get 4000 naira.",
+      "transcript": "My kitchen pipe don burst, I need plumber fast fast, I get 5k for hand.",
       "target": {
         "category": "Plumber",
-        "location": "Yaba",
-        "budget_ngn": 4000
+        "location": "",
+        "budget_ngn": 5000
       }
     },
     {
       "filename": "sample_03.wav",
-      "transcript": "I need rewinder wey go check my pumping machine for Bariga, my budget na 6k.",
+      "transcript": "I need rewinder wey go check my pumping machine, my budget na 6k.",
       "target": {
         "category": "Rewinder",
-        "location": "Bariga",
+        "location": "",
         "budget_ngn": 6000
       }
     },
     {
       "filename": "sample_04.wav",
-      "transcript": "Electrician dey around Surulere? Light full house but my breaker dey trip, I go pay 7500.",
+      "transcript": "Electrician dey around Surulere? Light dey full house but my breaker dey trip, I get like 5k for hand.",
       "target": {
         "category": "Electrician",
         "location": "Surulere",
-        "budget_ngn": 7500
+        "budget_ngn": 5000
       }
     },
     {
       "filename": "sample_05.wav",
-      "transcript": "Who dey do carpentry around Ikorodu garage? My wardrobe door don pull out, 3000 dey ground.",
+      "transcript": "Who dey do carpentry around Ikorodu garage? My kitchen wardrobe don fall, I get like 5000 naira to give.",
       "target": {
         "category": "Carpenter",
         "location": "Ikorodu garage",
-        "budget_ngn": 3000
+        "budget_ngn": 5000
       }
     },
     {
