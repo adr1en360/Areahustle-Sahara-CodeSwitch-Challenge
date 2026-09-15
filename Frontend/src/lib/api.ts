@@ -18,7 +18,7 @@ const demoUser: DemoUser = {
 
 const wait = () => new Promise((resolve) => setTimeout(resolve, 150));
 const ENV_URL = process.env.NEXT_PUBLIC_API_URL;
-const API_BASE = (ENV_URL && ENV_URL !== "/" && ENV_URL.trim() !== "" && !ENV_URL.includes("3000") ? ENV_URL : "http://localhost:8000").replace(/\/$/, "");
+const API_BASE = (ENV_URL && ENV_URL !== "/" && ENV_URL.trim() !== "" && !ENV_URL.includes("3000") ? ENV_URL : "https://areahustle-backend.onrender.com").replace(/\/$/, "");
 
 const defaultJobs = [
   {
