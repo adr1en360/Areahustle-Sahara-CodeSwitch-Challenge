@@ -110,6 +110,6 @@ async def transcribe(audio_bytes: bytes, lang: str = DEFAULT_LANG, filename: str
         raise RuntimeError("Sahara STT returned a non-JSON response") from exc
 
     transcript = (payload.get("data") or {}).get("audio_transcript", "")
-    if not transcript:
+    if not transcript or not transcript.strip():
         raise RuntimeError("Sahara STT returned an empty transcript")
-    return transcript
+    return transcript.strip()

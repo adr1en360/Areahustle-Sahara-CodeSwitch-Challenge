@@ -81,7 +81,19 @@ async def voice_search(
     except Exception as exc:
         raise HTTPException(status_code=502, detail=f"Intent extraction failed: {exc}") from exc
 
-    query: dict[str, Any] = {}
+    # An all-empty intent (silence or unintelligible audio) must not degrade
+    # into an unfiltered find({}) that returns every task in the database.
+    if not (intent.category or intent.location or intent.keyword
+            or intent.budget_min > 0 or intent.budget_max > 0):
+        raise HTTPException(
+            status_code=422,
+            detail="No searchable terms were recognized in the recording. "
+                   "Mention a trade, an area, or a budget and try again.",
+        )
+
+    # Voice search should only surface jobs that are still open — never
+    # matched/in-progress/completed ones.
+    query: dict[str, Any] = {"status": "open"}
     if intent.category:
         query["category"] = {"$regex": intent.category, "$options": "i"}
     if intent.location:
