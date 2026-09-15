@@ -8,7 +8,8 @@ Checks (the same ones Colab will do) BEFORE zipping, so a bad filename
 fails here instead of silently mislabeling your benchmark:
   1. Exactly 20 audio files present.
   2. Filenames sort alphabetically in the intended sample order (zero-padded
-     names like note01..note20 are required — note1, note10, note2 sorts wrong).
+     names like sample_01..sample_20 are required — sample_1, sample_10,
+     sample_2 sorts wrong).
 
 Output: audio.zip next to this script — drag it into the Colab file browser
 root (/content); the notebook's ingestion cell extracts it automatically.
@@ -44,7 +45,7 @@ def main():
     print("\nThese will map to sample_01..sample_20 in the order listed above.")
     ok = input("Is this order correct? (y/n): ").strip().lower()
     if ok != "y":
-        sys.exit("Aborted — rename the files so they sort in script order (zero-pad: note01..note20), then rerun.")
+        sys.exit("Aborted — rename the files so they sort in script order (zero-pad: sample_01..sample_20), then rerun.")
 
     with zipfile.ZipFile(OUTPUT, "w", zipfile.ZIP_DEFLATED) as zf:
         for f in files:

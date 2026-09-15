@@ -1,5 +1,6 @@
 """One-time local conversion: standardizes the recordings in benchmarks/audio/
-to 16kHz / 16-bit PCM / mono / peak-normalized WAV, named noteNN.wav.
+to 16kHz / 16-bit PCM / mono / peak-normalized WAV, named sample_NN.wav
+(matching dataset.json and the Colab notebook).
 
 Same logic as the notebook's standardize() so results are identical whether
 conversion happens here or in Colab. Originals are replaced by the converted
@@ -40,12 +41,12 @@ def main():
     converted = []
 
     for f in files:
-        # Target name: first digit run in the stem, zero-padded -> noteNN.wav.
+        # Target name: first digit run in the stem, zero-padded -> sample_NN.wav.
         match = re.search(r"\d+", f.stem)
         if not match:
             print(f"SKIPPED (no number in name): {f.name}")
             continue
-        dst_name = f"note{int(match.group()):02d}.wav"
+        dst_name = f"sample_{int(match.group()):02d}.wav"
         dst = TMP_DIR / dst_name
         standardize(f, dst)
         converted.append((f, dst))
