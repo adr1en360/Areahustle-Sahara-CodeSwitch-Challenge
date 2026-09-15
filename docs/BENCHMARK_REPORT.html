@@ -1,302 +1,485 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AreaHustle Voice ASR Benchmark Evaluation Report</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-  
-  :root {
-    --color-primary: #1a1a2e;
-    --color-accent: #0f3460;
-    --color-highlight: #e94560;
-    --color-bg: #ffffff;
-    --color-text: #1a1a2e;
-    --color-text-muted: #555;
-    --color-border: #ddd;
-    --color-table-header: #0f3460;
-    --color-table-alt: #f8f9fa;
-    --color-win: #16a34a;
-    --color-lose: #dc2626;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AreaHustle Voice ASR Benchmark Evaluation Report</title>
+  <style>
+    :root {
+      --color-primary: #1a1a2e;
+      --color-accent: #0f3460;
+      --color-highlight: #e94560;
+      --color-bg: #ffffff;
+      --color-text: #1a1a2e;
+      --color-text-muted: #555;
+      --color-border: #ddd;
+      --color-table-header: #0f3460;
+      --color-table-alt: #f8f9fa;
+      --color-win: #16a34a;
+      --color-lose: #dc2626;
   }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  @page {
+    size: A4;
+    margin: 8mm 12mm 8mm 12mm;
+  }
 
   body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    font-size: 11pt;
-    line-height: 1.55;
+    font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+    font-size: 8.8pt;
+    line-height: 1.36;
     color: var(--color-text);
     background: var(--color-bg);
     max-width: 210mm;
     margin: 0 auto;
-    padding: 15mm 20mm;
+    padding: 8mm 14mm;
   }
 
   /* Cover Header */
   .cover-header {
-    border-bottom: 3px solid var(--color-accent);
-    padding-bottom: 12px;
-    margin-bottom: 20px;
+    border-bottom: 2.5px solid var(--color-accent);
+    padding-bottom: 6px;
+    margin-bottom: 8px;
   }
+
   .cover-header h1 {
-    font-size: 20pt;
+    font-size: 15.5pt;
     font-weight: 700;
     color: var(--color-primary);
-    margin-bottom: 4px;
+    margin-bottom: 2px;
     letter-spacing: -0.3px;
   }
+
   .cover-header .subtitle {
-    font-size: 10pt;
+    font-size: 9pt;
     color: var(--color-text-muted);
-    margin-bottom: 6px;
+    margin-bottom: 4px;
+    line-height: 1.3;
   }
+
   .cover-header .meta {
-    font-size: 8.5pt;
+    font-size: 8pt;
     color: var(--color-text-muted);
     display: flex;
-    gap: 20px;
+    gap: 16px;
     flex-wrap: wrap;
   }
-  .cover-header .meta span { white-space: nowrap; }
+
+  .cover-header .meta span {
+    white-space: nowrap;
+  }
 
   /* Section headings */
   h2 {
-    font-size: 13pt;
+    font-size: 10.5pt;
     font-weight: 700;
     color: var(--color-accent);
-    margin-top: 22px;
-    margin-bottom: 8px;
-    padding-bottom: 3px;
+    margin-top: 9px;
+    margin-bottom: 4px;
+    padding-bottom: 2px;
     border-bottom: 1.5px solid var(--color-border);
   }
+
   h3 {
-    font-size: 11pt;
+    font-size: 9.2pt;
     font-weight: 600;
     color: var(--color-primary);
-    margin-top: 14px;
+    margin-top: 7px;
+    margin-bottom: 3px;
+  }
+
+  p {
     margin-bottom: 4px;
   }
 
-  p { margin-bottom: 8px; }
-  ul, ol { margin-left: 18px; margin-bottom: 8px; }
-  li { margin-bottom: 3px; }
+  ul,
+  ol {
+    margin-left: 15px;
+    margin-bottom: 4px;
+  }
+
+  li {
+    margin-bottom: 2px;
+    font-size: 8.5pt;
+  }
 
   /* Tables */
   table {
     width: 100%;
     border-collapse: collapse;
-    margin: 10px 0 14px 0;
-    font-size: 9.5pt;
+    margin: 4px 0 6px 0;
+    font-size: 8pt;
   }
+
   thead th {
     background: var(--color-table-header);
     color: #fff;
     font-weight: 600;
-    padding: 6px 8px;
+    padding: 3.5px 6px;
     text-align: left;
     border: 1px solid var(--color-table-header);
   }
+
   tbody td {
-    padding: 5px 8px;
+    padding: 2.5px 6px;
     border: 1px solid var(--color-border);
   }
-  tbody tr:nth-child(even) { background: var(--color-table-alt); }
-  .best { font-weight: 700; color: var(--color-win); }
-  .worst { color: var(--color-lose); }
 
-  /* Key finding boxes */
-  .finding-box {
-    background: #f0f4f8;
-    border-left: 4px solid var(--color-accent);
-    padding: 8px 12px;
-    margin: 8px 0 12px 0;
-    font-size: 10pt;
+  tbody tr:nth-child(even) {
+    background: var(--color-table-alt);
   }
 
-  /* Case study comparison */
-  .comparison-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin: 8px 0;
-  }
-  .comparison-card {
-    border: 1px solid var(--color-border);
-    border-radius: 4px;
-    padding: 8px 10px;
-    font-size: 9.5pt;
-  }
-  .comparison-card h4 {
-    font-size: 9.5pt;
-    font-weight: 600;
-    margin-bottom: 4px;
-    color: var(--color-accent);
+  .best {
+    font-weight: 700;
+    color: var(--color-win);
   }
 
-  /* Footer */
-  .doc-footer {
-    margin-top: 30px;
-    padding-top: 8px;
-    border-top: 1px solid var(--color-border);
-    font-size: 8pt;
-    color: var(--color-text-muted);
-    display: flex;
-    justify-content: space-between;
-  }
+    .worst {
+      color: var(--color-lose);
+    }
 
-  /* Page breaks for PDF */
-  .page-break { page-break-before: always; margin-top: 0; }
+    /* Key finding boxes */
+    .finding-box {
+      background: #f0f4f8;
+      border-left: 4px solid var(--color-accent);
+      padding: 6px 10px;
+      margin: 5px 0 8px 0;
+      font-size: 9pt;
+    }
 
-  @media print {
-    body { padding: 10mm 15mm; }
-    .page-break { page-break-before: always; }
-  }
-</style>
+    /* Case study comparison */
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 5px 0;
+    }
+
+    .comparison-card {
+      border: 1px solid var(--color-border);
+      border-radius: 4px;
+      padding: 6px 8px;
+      font-size: 8.5pt;
+    }
+
+    .comparison-card h4 {
+      font-size: 8.5pt;
+      font-weight: 600;
+      margin-bottom: 3px;
+      color: var(--color-accent);
+    }
+
+    /* Table footnote */
+    .table-note {
+      font-size: 8pt;
+      color: var(--color-text-muted);
+      margin-top: -4px;
+      margin-bottom: 8px;
+    }
+
+    /* Footer */
+    .doc-footer {
+      margin-top: 14px;
+      padding-top: 6px;
+      border-top: 1px solid var(--color-border);
+      font-size: 7.5pt;
+      color: var(--color-text-muted);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Page breaks for PDF */
+    .page-break {
+      page-break-before: always;
+      margin-top: 0;
+    }
+
+    @media print {
+      body {
+        padding: 0;
+        max-width: none;
+      }
+
+      .page-break {
+        page-break-before: always;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<!-- COVER HEADER -->
-<div class="cover-header">
-  <h1>AreaHustle Voice ASR Benchmark</h1>
-  <div class="subtitle">Evaluation of intra-sentential Nigerian Pidgin-English code-switching for autonomous gig-marketplace transactions</div>
-  <div class="meta">
-    <span><strong>Competition:</strong> Sahara CodeSwitch Africa Challenge, Track 5</span>
-    <span><strong>Date:</strong> September 2026</span>
-    <span><strong>Dataset:</strong> 20 samples, 2.8 min total</span>
-    <span><strong>Version:</strong> 1.0 (Final)</span>
+  <!-- COVER HEADER -->
+  <div class="cover-header">
+    <h1>AreaHustle Voice ASR Benchmark</h1>
+    <div class="subtitle">Evaluation of intra-sentential Nigerian Pidgin-English code-switching for autonomous
+      gig-marketplace transactions</div>
+    <div class="meta">
+      <span><strong>Competition:</strong> Sahara CodeSwitch Africa Challenge, Track 5</span>
+      <span><strong>Date:</strong> September 2026</span>
+      <span><strong>Dataset:</strong> 20 samples, 2.8 min total</span>
+      <span><strong>Version:</strong> 1.0 (Final)</span>
+    </div>
   </div>
-</div>
 
-<!-- 1. EXECUTIVE SUMMARY -->
-<h2>1. Executive summary</h2>
-<p>
-  AreaHustle is a voice-first gig marketplace for Lagos informal markets. Customers post artisan jobs by speaking Nigerian Pidgin-English. This report evaluates three speech-to-text models on spontaneous Pidgin-English code-switched dispatch commands, then measures whether the resulting transcripts are accurate enough for an LLM agent to autonomously execute the downstream database transaction (trade category, location, budget) without human correction.
-</p>
-<div class="finding-box">
-  Intron Sahara v2.5 halves the transcription error of the best global baseline (WER 33.9% vs 67.6%) and is the only model that preserves code-switched Pidgin markers and trade loanwords verbatim.
-</div>
-
-<!-- 2. MODELS UNDER EVALUATION -->
-<h2>2. Models under evaluation</h2>
-<table>
-  <thead>
-    <tr><th>Model</th><th>Type</th><th>Parameters</th><th>Dialect</th><th>Inference</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>Intron Sahara v2.5</td><td>Domain-Specific API</td><td>Proprietary</td><td><code>pcm</code></td><td>Cloud API</td></tr>
-    <tr><td>OpenAI Whisper Large-v3</td><td>General Transformer</td><td>1.55B</td><td>English decoding</td><td>Colab T4 GPU</td></tr>
-    <tr><td>Meta MMS-1B</td><td>Multilingual CTC</td><td>1.0B</td><td><code>pcm</code></td><td>Colab T4 GPU</td></tr>
-  </tbody>
-</table>
-
-<!-- 3. DATASET METHODOLOGY -->
-<h2>3. Dataset methodology</h2>
-<table>
-  <thead>
-    <tr><th>Property</th><th>Value</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>Source</td><td>Self-recorded natural artisan dispatch commands (Lagos informal markets)</td></tr>
-    <tr><td>Language / Dialect</td><td>Nigerian Pidgin-English (<code>pcm</code>) with regional trade vocabulary</td></tr>
-    <tr><td>Sample count</td><td>20 consented recordings</td></tr>
-    <tr><td>Total duration</td><td>2.8 minutes (average clip: 8.4 s)</td></tr>
-    <tr><td>Audio format</td><td>16,000 Hz, 16-bit PCM, mono WAV, peak-normalized</td></tr>
-    <tr><td>Ground truth</td><td>Verbatim transcripts + target slots per clip (<code>benchmarks/dataset.json</code>)</td></tr>
-    <tr><td>Note</td><td>Samples 01-05 were recorded with natural ad-libbing; ground truth was aligned to the actual speech post-hoc</td></tr>
-  </tbody>
-</table>
-
-<!-- 4. EVALUATION METRICS -->
-<h2>4. Evaluation metrics</h2>
-<ul>
-  <li><strong>WER (Word Error Rate):</strong> Standard benchmark for transcription fidelity, computed with <code>jiwer</code> after normalization (lowercase, punctuation stripped, whitespace collapsed).</li>
-  <li><strong>CER (Character Error Rate):</strong> Particularly important for indigenous African terms, where minor character alterations separate intelligible slang from lexical corruption.</li>
-  <li><strong>Downstream Slot-Filling Accuracy:</strong> Each model's transcripts were passed through the identical Gemini (<code>gemini-3.5-flash-lite</code>) extraction prompt and compared against ground-truth target slots. A sample counts as end-to-end success only when all three slots (category, location, budget) match.</li>
-</ul>
-
-<!-- PAGE 2 -->
-<h2 class="page-break">5. Quantitative results</h2>
-
-<h3>5.1 Acoustic performance (speech-to-text)</h3>
-<table>
-  <thead>
-    <tr><th>Model</th><th>WER (%)</th><th>CER (%)</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>Intron Sahara v2.5</td><td class="best">33.9</td><td class="best">18.9</td></tr>
-    <tr><td>OpenAI Whisper Large-v3</td><td>67.6</td><td>30.2</td></tr>
-    <tr><td>Meta MMS-1B</td><td class="worst">79.9</td><td class="worst">36.2</td></tr>
-  </tbody>
-</table>
-
-<h3>5.2 Downstream agentic task performance (Gemini slot-filling)</h3>
-<table>
-  <thead>
-    <tr><th>Source Transcript</th><th>Category (%)</th><th>Location (%)</th><th>Budget (%)</th><th>End-to-End (%)</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>Intron Sahara v2.5</td><td class="best">55.0</td><td class="best">40.0</td><td>80.0</td><td>15.0</td></tr>
-    <tr><td>OpenAI Whisper Large-v3</td><td>80.0</td><td>20.0</td><td>80.0</td><td>20.0</td></tr>
-    <tr><td>Meta MMS-1B</td><td>60.0</td><td>30.0</td><td class="worst">50.0</td><td class="worst">5.0</td></tr>
-  </tbody>
-</table>
-
-<h3>5.3 Analysis</h3>
-<p>Sahara produces half the transcription error of the best global baseline. The advantage is concentrated where AreaHustle needs it: code-switched Pidgin markers and vernacular trade loanwords.</p>
-<p>Budget extraction is where acoustic error converts directly into money. Sahara and Whisper both land the escrow amount 80% of the time, while MMS's numeral corruption (3500 becomes "10005 hundred", 9000 becomes 1000, three clips returned a budget of 0) drops it to 50%.</p>
-<p>Whisper posts the highest category accuracy (80% vs Sahara's 55%) despite double the WER. Its English-biased output matches the target label vocabulary ("carpenter", "electrician"), while Sahara's verbatim Pidgin trade terms ("roof repairer", "brick layer") fail exact string-match against the ground-truth labels. This is label aliasing, not acoustic failure, and it motivated the canonical category-mapping layer now in the production backend.</p>
-<p>Location is the weakest slot for every model (Sahara 40%, MMS 30%, Whisper 20%). Yoruba-origin Lagos place names like Ojuelegba, Ilupeju, Ketu, and Agege get phonetically corrupted regardless of model. At n=20 each clip is five percentage points, so the Sahara-Whisper end-to-end gap (15% vs 20%) is within noise.</p>
-
-<!-- PAGE 3 -->
-<h2 class="page-break">6. Qualitative failure-mode analysis</h2>
-
-<h3>6.1 Per-model error profiles</h3>
-
-<p><strong>Intron Sahara v2.5</strong> preserved Pidgin grammatical particles (<em>"wey"</em>, <em>"fit"</em>, <em>"wan"</em>) and vernacular trade terms (<em>"rewinder"</em>, <em>"vulcanizer"</em>). It struggles on specialist loanwords and truncated numerals. Ground truth <em>"I need rewinder wey go check my pumping machine, my budget na 6k"</em> came back as <em>"I need rwanda wey go check my pumping machine my budget na 6"</em>: "rewinder" became "rwanda" and the budget collapsed from ₦6,000 to ₦6.</p>
-
-<p><strong>OpenAI Whisper Large-v3</strong> exhibits standard-English bias that causes phonetic hallucination over Pidgin markers. Ground truth <em>"Abeg I dey Ikeja underbridge now, my brake dey sound, I need mechanic for 5k"</em> came back as <em>"ID Ikeza under bridge. My break day sound. I need mechanic for 5K."</em> Every Pidgin marker snapped to its English homophone. On sample_11 the same bias produced full pseudo-Yoruba hallucination.</p>
-
-<p><strong>Meta MMS-1B</strong> systematically respells trade terms at the character level (<em>"mekanik"</em>, <em>"plonbar"</em>, <em>"briklayer"</em>), merges words into run-ons (<em>"lekeifese"</em> for "Lekki phase 1"), and corrupts numerals severely enough that three clips returned a budget of 0.</p>
-
-<h3>6.2 Case study: Language-code sensitivity (<code>pcm</code> vs <code>yo</code>)</h3>
-<p>To understand what the <code>pcm</code> language-code choice trades away, we ran sample_11 through Sahara twice: once with <code>pcm</code>, once with <code>yo</code>. Ground truth: <em>"Welder dey this area? Iron gate hinge don cut for Ojuelegba, 4500 naira dey."</em></p>
-
-<div class="comparison-grid">
-  <div class="comparison-card">
-    <h4>Sahara <code>pcm</code></h4>
-    <p><em>"Welder dey dis area iron gate in don cut for Uju lego 4500 naira dey"</em></p>
-    <ul>
-      <li>✅ Trade term + budget preserved</li>
-      <li>❌ Place name corrupted ("Ojuelegba" became "Uju lego")</li>
-    </ul>
+  <!-- 1. EXECUTIVE SUMMARY -->
+  <h2>1. Executive summary</h2>
+  <p>
+    AreaHustle is a voice-first gig marketplace for Lagos informal markets. Customers post artisan jobs by speaking
+    Nigerian Pidgin-English. This report evaluates three speech-to-text models on spontaneous Pidgin-English
+    code-switched dispatch commands, then measures whether the resulting transcripts are accurate enough for an LLM
+    agent to autonomously execute the downstream database transaction (trade category, location, budget) without human
+    correction.
+  </p>
+  <div class="finding-box">
+    Intron Sahara v2.5 produces less than half the transcription error of the best global baseline (WER 26.6% vs 59.7%)
+    and is the only model that preserves code-switched Pidgin markers and trade loanwords verbatim.
   </div>
-  <div class="comparison-card">
-    <h4>Sahara <code>yo</code></h4>
-    <p><em>"Well that day this area, I youngate in done court for ojú ẹlẹ́gba o, 400 naira day"</em></p>
-    <ul>
-      <li>✅ Place name recovered in native orthography</li>
-      <li>❌ Trade term + budget destroyed</li>
-    </ul>
+
+  <!-- 2. MODELS UNDER EVALUATION -->
+  <h2>2. Models under evaluation</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Model</th>
+        <th>Type</th>
+        <th>Parameters</th>
+        <th>Dialect</th>
+        <th>Inference</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Intron Sahara v2.5</td>
+        <td>Domain-Specific API</td>
+        <td>Proprietary</td>
+        <td><code>pcm</code></td>
+        <td>Cloud API</td>
+      </tr>
+      <tr>
+        <td>OpenAI Whisper Large-v3</td>
+        <td>General Transformer</td>
+        <td>1.55B</td>
+        <td>English decoding</td>
+        <td>Colab T4 GPU</td>
+      </tr>
+      <tr>
+        <td>Meta MMS-1B</td>
+        <td>Multilingual CTC</td>
+        <td>1.0B</td>
+        <td><code>pcm</code></td>
+        <td>Colab T4 GPU</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 3. DATASET METHODOLOGY -->
+  <h2>3. Dataset methodology</h2>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 22%;">Property</th>
+        <th style="width: 28%;">Specification</th>
+        <th style="width: 22%;">Property</th>
+        <th style="width: 28%;">Specification</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Source & Domain</strong></td>
+        <td>Lagos informal artisan dispatch</td>
+        <td><strong>Sample Count</strong></td>
+        <td>20 consented recordings</td>
+      </tr>
+      <tr>
+        <td><strong>Language / Code</strong></td>
+        <td>Nigerian Pidgin (<code>pcm</code>)</td>
+        <td><strong>Total Duration</strong></td>
+        <td>2.8 minutes (avg 8.4 s / clip)</td>
+      </tr>
+      <tr>
+        <td><strong>Audio Format</strong></td>
+        <td>16 kHz, 16-bit mono WAV</td>
+        <td><strong>Normalization</strong></td>
+        <td>Peak-normalized (-1.0 dBFS)</td>
+      </tr>
+      <tr>
+        <td><strong>Target Slots</strong></td>
+        <td>Category, Location, Budget (NGN)</td>
+        <td><strong>Ground Truth</strong></td>
+        <td>Verbatim phonetic alignment</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 4. EVALUATION METRICS -->
+  <h2>4. Evaluation metrics</h2>
+  <ul>
+    <li><strong>WER (Word Error Rate):</strong> Standard benchmark for transcription fidelity, computed with
+      <code>jiwer</code> after normalization (lowercase, punctuation stripped, whitespace collapsed).</li>
+    <li><strong>CER (Character Error Rate):</strong> Particularly important for indigenous African terms, where minor
+      character alterations separate intelligible slang from lexical corruption.</li>
+    <li><strong>Downstream Slot-Filling Accuracy:</strong> Each model's transcripts were passed through the identical
+      Gemini (<code>gemini-3.5-flash-lite</code>) extraction prompt and compared against ground-truth target slots. A
+      sample counts as end-to-end success only when all three slots (category, location, budget) match.</li>
+  </ul>
+
+  <!-- PAGE 2 -->
+  <h2 class="page-break">5. Quantitative results</h2>
+
+  <h3>5.1 Acoustic performance (speech-to-text)</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Model</th>
+        <th>WER (%)</th>
+        <th>CER (%)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Intron Sahara v2.5</td>
+        <td class="best">26.6</td>
+        <td class="best">12.9</td>
+      </tr>
+      <tr>
+        <td>OpenAI Whisper Large-v3</td>
+        <td>59.7</td>
+        <td>24.0</td>
+      </tr>
+      <tr>
+        <td>Meta MMS-1B</td>
+        <td class="worst">75.7</td>
+        <td class="worst">31.7</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>5.2 Downstream agentic task performance (Gemini slot-filling)</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Source Transcript</th>
+        <th>Category (%)</th>
+        <th>Location (%)</th>
+        <th>Budget (%)</th>
+        <th>End-to-End (%)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Intron Sahara v2.5</td>
+        <td class="best">55.0</td>
+        <td class="best">40.0</td>
+        <td>95.0</td>
+        <td>15.0</td>
+      </tr>
+      <tr>
+        <td>OpenAI Whisper Large-v3</td>
+        <td>80.0</td>
+        <td>20.0</td>
+        <td>95.0</td>
+        <td>20.0</td>
+      </tr>
+      <tr>
+        <td>Meta MMS-1B</td>
+        <td>60.0</td>
+        <td>30.0</td>
+        <td class="worst">65.0</td>
+        <td class="worst">5.0</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>5.3 Analysis</h3>
+  <p>Sahara produces less than half the transcription error of the best global baseline. The advantage is concentrated
+    where AreaHustle needs it: code-switched Pidgin markers and vernacular trade loanwords.</p>
+  <p>Budget extraction is where acoustic error converts directly into money. Sahara and Whisper both land the escrow
+    amount 95% of the time, while MMS's numeral corruption (3500 becomes "10005 hundred", 9000 becomes 1000, three clips
+    returned a budget of 0) drops it to 65%.</p>
+  <p>Whisper posts the highest category accuracy (80% vs Sahara's 55%) despite more than double the WER. Its
+    English-biased output matches the target label vocabulary ("carpenter", "electrician"), while Sahara's verbatim
+    Pidgin trade terms ("roof repairer", "brick layer") fail exact string-match against the ground-truth labels. This is
+    label aliasing, not acoustic failure, and it motivated the canonical category-mapping layer now in the production
+    backend.</p>
+  <p>Location is the weakest slot for every model (Sahara 40%, MMS 30%, Whisper 20%). Yoruba-origin Lagos place names
+    like Ojuelegba, Ilupeju, Ketu, and Agege get phonetically corrupted regardless of model. At n=20 each clip is five
+    percentage points, so the Sahara-Whisper end-to-end gap (15% vs 20%) is within noise.</p>
+
+  <!-- PAGE 3 -->
+  <h2 class="page-break">6. Qualitative failure-mode analysis</h2>
+
+  <h3>6.1 Per-model error profiles</h3>
+
+  <p><strong>Intron Sahara v2.5</strong> preserved Pidgin grammatical particles (<em>"wey"</em>, <em>"fit"</em>,
+    <em>"wan"</em>) and vernacular trade terms (<em>"rewinder"</em>, <em>"vulcanizer"</em>). It struggles on specialist
+    loanwords and truncated numerals. Ground truth <em>"I need rewinder wey go check my pumping machine, my budget na
+      6k"</em> came back as <em>"I need rwanda wey go check my pumping machine my budget na 6"</em>: "rewinder" became
+    "rwanda" and the budget collapsed from ₦6,000 to ₦6.</p>
+
+  <p><strong>OpenAI Whisper Large-v3</strong> exhibits standard-English bias that causes phonetic hallucination over
+    Pidgin markers. Ground truth <em>"Abeg I dey Ikeja underbridge now, my brake dey sound, I need mechanic for 5k"</em>
+    came back as <em>"ID Ikeza under bridge. My break day sound. I need mechanic for 5K."</em> Every Pidgin marker
+    snapped to its English homophone. On sample_11 the same bias produced full pseudo-Yoruba hallucination.</p>
+
+  <p><strong>Meta MMS-1B</strong> systematically respells trade terms at the character level (<em>"mekanik"</em>,
+    <em>"plonbar"</em>, <em>"briklayer"</em>), merges words into run-ons (<em>"lekeifese"</em> for "Lekki phase 1"), and
+    corrupts numerals severely enough that three clips returned a budget of 0.</p>
+
+  <h3>6.2 Case study: Language-code sensitivity (<code>pcm</code> vs <code>yo</code>)</h3>
+  <p>To understand what the <code>pcm</code> language-code choice trades away, we ran sample_11 through Sahara twice:
+    once with <code>pcm</code>, once with <code>yo</code>. Ground truth: <em>"Welder dey this area? Iron gate hinge don
+      cut for Ojuelegba, 4500 naira dey."</em></p>
+
+  <div class="comparison-grid">
+    <div class="comparison-card">
+      <h4>Sahara <code>pcm</code></h4>
+      <p><em>"Welder dey dis area iron gate in don cut for Uju lego 4500 naira dey"</em></p>
+      <ul>
+        <li>Trade term and budget preserved</li>
+        <li>Place name corrupted ("Ojuelegba" became "Uju lego")</li>
+      </ul>
+    </div>
+    <div class="comparison-card">
+      <h4>Sahara <code>yo</code></h4>
+      <p><em>"Well that day this area, I youngate in done court for ojú ẹlẹ́gba o, 400 naira day"</em></p>
+      <ul>
+        <li>Place name recovered in native orthography</li>
+        <li>Trade term and budget corrupted</li>
+      </ul>
+    </div>
   </div>
-</div>
-<p>The two language codes fail in complementary ways. A wrong budget silently misprices an escrow contract; a wrong neighbourhood only degrades matching. AreaHustle therefore defaults to <code>pcm</code> and exposes <code>yo</code> as an explicit user toggle.</p>
+  <p>The two language codes fail in complementary ways. A wrong budget silently misprices an escrow contract; a wrong
+    neighbourhood only degrades matching. AreaHustle therefore defaults to <code>pcm</code> and exposes <code>yo</code>
+    as an explicit user toggle.</p>
 
-<!-- 7. CONCLUSION -->
-<h2>7. Conclusion and production mitigations</h2>
-<p>Intron Sahara v2.5 halves the transcription error of the best global baseline (WER 33.9% vs 67.6%) and is the only model that preserves code-switched Pidgin markers and trade loanwords verbatim. The remaining failures concentrate in two places: specialist trade-label vocabulary and Yoruba-origin place names. Both are addressed in the production backend:</p>
-<ul>
-  <li>A canonical category-mapping layer that maps verbatim Pidgin trade terms ("roof repairer", "brick layer") to the database schema ("Roofer", "Bricklayer") using fuzzy matching.</li>
-  <li>A per-language (<code>pcm</code>/<code>yo</code>) toggle that lets users switch language codes when location accuracy matters more than budget precision.</li>
-</ul>
-<p>Per-sample transcripts and full metrics are available in <code>benchmarks/results.json</code>.</p>
+  <!-- 7. CONCLUSION -->
+  <h2>7. Conclusion and production mitigations</h2>
+  <p>Intron Sahara v2.5 halves the transcription error of the best global baseline (WER 26.6% vs 59.7%) and is the only
+    model that preserves code-switched Pidgin markers and trade loanwords verbatim. The remaining failures concentrate
+    in two places: specialist trade-label vocabulary and Yoruba-origin place names. Both are addressed in the production
+    backend:</p>
+  <ul>
+    <li>A canonical category-mapping layer that maps verbatim Pidgin trade terms ("roof repairer", "brick layer") to the
+      database schema ("Roofer", "Bricklayer") using fuzzy matching.</li>
+    <li>A per-language (<code>pcm</code>/<code>yo</code>) toggle that lets users switch language codes when location
+      accuracy matters more than budget precision.</li>
+  </ul>
+  <p>Per-sample transcripts and full metrics are available in <code>benchmarks/results.json</code>.</p>
 
-<!-- FOOTER -->
-<div class="doc-footer">
-  <span>AreaHustle Voice ASR Benchmark Evaluation Report v1.0</span>
-  <span>Sahara CodeSwitch Africa Challenge, Track 5 | September 2026</span>
-</div>
+  <!-- FOOTER -->
+  <div class="doc-footer">
+    <span>AreaHustle Voice ASR Benchmark Evaluation Report v1.0</span>
+    <span>Sahara CodeSwitch Africa Challenge, Track 5 | September 2026</span>
+  </div>
 
 </body>
+
 </html>
