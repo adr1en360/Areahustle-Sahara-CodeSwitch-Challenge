@@ -17,7 +17,8 @@ const demoUser: DemoUser = {
 };
 
 const wait = () => new Promise((resolve) => setTimeout(resolve, 150));
-const API_BASE = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000").replace(/\/$/, "");
+const ENV_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_BASE = (ENV_URL && ENV_URL !== "/" && ENV_URL.trim() !== "" && !ENV_URL.includes("3000") ? ENV_URL : "http://localhost:8000").replace(/\/$/, "");
 
 const defaultJobs = [
   {
@@ -176,71 +177,58 @@ export const voiceApi = {
 };
 
 export const api = {
-  login: async (data: any) =>
-    withFallback(
-      async () => {
-        const result = await requestJson("/api/auth/login", {
-          method: "POST",
-          body: JSON.stringify({ email: data?.email ?? data?.username, password: data?.password }),
-        });
-        return {
-          access_token: result.access_token || `demo-token-${Date.now()}`,
-          user_id: result.user_id,
-          role: result.role || (String(data?.username ?? "").includes("customer") ? "customer" : "hustler"),
-          email: data?.email ?? data?.username,
-        };
-      },
-      {
-        access_token: `demo-token-${data?.username ?? data?.email ?? "user"}`,
-        user_id: data?.user_id ?? 1,
-        role: data?.role ?? (String(data?.username ?? "").includes("customer") ? "customer" : "hustler"),
-        email: data?.email ?? data?.username,
-      },
-    ),
+  login: async (data: any) => {
+    const result = await requestJson("/api/auth/login", {
+      method: "POST",
+      body: JSON.stringify({ email: data?.email ?? data?.username, password: data?.password }),
+    });
+    return {
+      access_token: result.access_token || `demo-token-${Date.now()}`,
+      user_id: result.user_id,
+      role: result.role || (String(data?.username ?? "").includes("customer") ? "customer" : "hustler"),
+      email: data?.email ?? data?.username,
+    };
+  },
 
-  register: async (data: any) =>
-    withFallback(
-      async () => {
-        const result = await requestJson("/api/auth/signup", {
-          method: "POST",
-          body: JSON.stringify({
-            email: data.email,
-            password: data.password,
-            role: data.role ?? "customer",
-          }),
-        });
-        const user = {
-          id: result.user_id ?? 1,
-          email: data.email,
-          name: data.name ?? data.email.split("@")[0],
-          role: data.role ?? "customer",
-          wallet_balance: data.role === "customer" ? 60000 : 24500,
-          trust_score: data.role === "customer" ? 0 : 820,
-          access_token: result.access_token || `demo-token-${Date.now()}`,
-        };
-        if (typeof window !== "undefined") window.localStorage.setItem("areahustle-demo-user", JSON.stringify(user));
-        return user;
-      },
-      {
-        ...demoUser,
-        id: 1,
-        email: data.email ?? demoUser.email,
-        name: data.name ?? demoUser.name,
-        role: data.role ?? demoUser.role,
-        access_token: `demo-token-${data?.email ?? "user"}`,
-      },
-    ),
+  register: async (data: any) => {
+    const result = await requestJson("/api/auth/signup", {
+      method: "POST",
+      body: JSON.stringify({
+        email: data.email,
+        password: data.password,
+        role: data.role ?? "customer",
+      }),
+    });
+    const user = {
+      id: result.user_id ?? 1,
+      email: data.email,
+      name: data.name ?? data.email.split("@")[0],
+      role: data.role ?? "customer",
+      wallet_balance: data.role === "customer" ? 60000 : 24500,
+      trust_score: data.role === "customer" ? 0 : 820,
+      access_token: result.access_token || `demo-token-${Date.now()}`,
+    };
+    if (typeof window !== "undefined") window.localStorage.setItem("areahustle-demo-user", JSON.stringify(user));
+    return user;
+  },
 
   getMe: async () => {
-    const saved = typeof window !== "undefined" ? window.localStorage.getItem("areahustle-demo-user") : null;
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        // ignore malformed local cache
+    let userId = "1";
+    if (typeof window !== "undefined") {
+      const saved = window.localStorage.getItem("areahustle-demo-user");
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (parsed?.id) userId = parsed.id;
+        } catch {}
       }
     }
-    return { ...demoUser };
+    try {
+      const result = await requestJson(`/api/users/profile/${userId}`);
+      return result;
+    } catch {
+      return { ...demoUser, id: userId };
+    }
   },
 
   updateWallet: async (amount: number) => {
@@ -251,140 +239,96 @@ export const api = {
     return next;
   },
 
-  getTasks: async ({ status, neighbourhood }: { status?: string; neighbourhood?: string } = {}) =>
-    withFallback(
-      async () => {
-        const params = new URLSearchParams();
-        if (status) params.set("status", status);
-        if (neighbourhood) params.set("neighbourhood", neighbourhood);
-        const result = await requestJson(`/api/tasks${params.toString() ? `?${params.toString()}` : ""}`);
-        return Array.isArray(result) ? result.map(normalizeJob) : [];
-      },
-      getLocalJobs().filter((job: any) => {
-        const matchesStatus = !status || job.status === status;
-        const matchesLocation = !neighbourhood || (job.location || job.neighbourhood) === neighbourhood;
-        return matchesStatus && matchesLocation;
-      }),
-    ),
+  getTasks: async ({ status, neighbourhood }: { status?: string; neighbourhood?: string } = {}) => {
+    const params = new URLSearchParams();
+    if (status) params.set("status", status);
+    if (neighbourhood) params.set("neighbourhood", neighbourhood);
+    const result = await requestJson(`/api/tasks${params.toString() ? `?${params.toString()}` : ""}`);
+    return Array.isArray(result) ? result.map(normalizeJob) : [];
+  },
 
-  getMyTasks: async () =>
-    withFallback(
-      async () => {
-        const result = await requestJson("/api/tasks/my");
-        return Array.isArray(result) ? result.map(normalizeJob) : [];
-      },
-      getLocalJobs().filter((job: any) => job.status !== "open"),
-    ),
+  getMyTasks: async () => {
+    let userId = "demo";
+    if (typeof window !== "undefined") {
+      const saved = window.localStorage.getItem("areahustle-demo-user");
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (parsed?.id) userId = parsed.id;
+        } catch {}
+      }
+    }
+    const result = await requestJson(`/api/tasks/my?customer_id=${userId}`);
+    return Array.isArray(result) ? result.map(normalizeJob) : [];
+  },
 
-  createTask: async (data: any) =>
-    withFallback(
-      async () => {
-        const payload = {
-          title: data.title,
-          description: data.description,
-          budget: Number(data.budget ?? 0),
-          neighbourhood: data.neighbourhood ?? "Lekki Phase 1",
-          category: data.category ?? "General",
-          customer_id: data.customer_id ?? "demo-customer",
-          status: data.status ?? "open",
-        };
-        const result = await requestJson("/api/tasks", {
-          method: "POST",
-          body: JSON.stringify(payload),
-        });
-        return normalizeJob(result);
-      },
-      (() => {
-        const jobs = getLocalJobs();
-        const next = normalizeJob({
-          id: `job-${Date.now()}`,
-          title: data.title ?? "New Task",
-          description: data.description ?? "",
-          category: data.category ?? "General",
-          budget: Number(data.budget ?? 0),
-          location: data.neighbourhood ?? "Lekki Phase 1",
-          neighbourhood: data.neighbourhood ?? "Lekki Phase 1",
-          status: "open",
-          customer: "You",
-        });
-        saveLocalJobs([next, ...jobs]);
-        return next;
-      })(),
-    ),
+  createTask: async (data: any) => {
+    let userId = "demo";
+    if (typeof window !== "undefined") {
+      const saved = window.localStorage.getItem("areahustle-demo-user");
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (parsed?.id) userId = parsed.id;
+        } catch {}
+      }
+    }
+    const payload = {
+      title: data.title,
+      description: data.description,
+      budget: Number(data.budget ?? 0),
+      neighbourhood: data.neighbourhood ?? "Lekki Phase 1",
+      category: data.category ?? "General",
+      customer_id: data.customer_id ?? userId,
+      status: data.status ?? "open",
+    };
+    const result = await requestJson("/api/tasks", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+    return normalizeJob(result);
+  },
 
-  matchTask: async (id: string) =>
-    withFallback(
-      async () => {
-        const result = await requestJson(`/api/tasks/${id}/match`, { method: "POST" });
-        return result;
-      },
-      (() => {
-        const jobs = getLocalJobs();
-        const updated = jobs.map((job: any) => (String(job.id ?? job._id) === String(id) ? { ...job, status: "matched" } : job));
-        saveLocalJobs(updated);
-        return updated.find((job: any) => String(job.id ?? job._id) === String(id));
-      })(),
-    ),
+  matchTask: async (id: string) => {
+    const result = await requestJson(`/api/tasks/${id}/match`, { method: "POST" });
+    return result;
+  },
 
-  activateTask: async (id: string) =>
-    withFallback(
-      async () => {
-        const result = await requestJson(`/api/tasks/${id}/activate`, { method: "POST" });
-        return result;
-      },
-      (() => {
-        const jobs = getLocalJobs();
-        const updated = jobs.map((job: any) => (String(job.id ?? job._id) === String(id) ? { ...job, status: "in_progress" } : job));
-        saveLocalJobs(updated);
-        return updated.find((job: any) => String(job.id ?? job._id) === String(id));
-      })(),
-    ),
+  activateTask: async (id: string) => {
+    const result = await requestJson(`/api/tasks/${id}/activate`, { method: "POST" });
+    return result;
+  },
 
-  completeTask: async (id: string) =>
-    withFallback(
-      async () => {
-        const result = await requestJson(`/api/tasks/${id}/complete`, { method: "POST" });
-        return result;
-      },
-      (() => {
-        const jobs = getLocalJobs();
-        const updated = jobs.map((job: any) => (String(job.id ?? job._id) === String(id) ? { ...job, status: "completed" } : job));
-        saveLocalJobs(updated);
-        return updated.find((job: any) => String(job.id ?? job._id) === String(id));
-      })(),
-    ),
+  completeTask: async (id: string) => {
+    const result = await requestJson(`/api/tasks/${id}/complete`, { method: "POST" });
+    return result;
+  },
 
-  updateTask: async (id: string, payload: any) =>
-    withFallback(
-      async () => {
-        const result = await requestJson(`/api/tasks/${id}`, {
-          method: "PATCH",
-          body: JSON.stringify(payload),
-        });
-        return result;
-      },
-      (() => {
-        const jobs = getLocalJobs();
-        const updated = jobs.map((job: any) => (String(job.id ?? job._id) === String(id) ? { ...job, ...payload } : job));
-        saveLocalJobs(updated);
-        return updated.find((job: any) => String(job.id ?? job._id) === String(id));
-      })(),
-    ),
+  updateTask: async (id: string, payload: any) => {
+    const result = await requestJson(`/api/tasks/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(payload),
+    });
+    return result;
+  },
 
-  getPassport: async (userId = "demo") =>
-    withFallback(
-      async () => {
-        const result = await requestJson(`/api/passport/profile/${userId}`);
-        return result;
-      },
-      {
-        trust_score: 820,
-        job_completion_rate: 96,
-        on_time_arrival: 94,
-        repeat_hire_ratio: 88,
-        dispute_rate: 2,
-      },
-    ),
+  getPassport: async (userId = "demo") => {
+    const result = await requestJson(`/api/passport/profile/${userId}`);
+    return result;
+  },
+
+  verifyIdentity: async (userId: string, data: { identity_type: string; document_number: string; id_document: File }) => {
+    const formData = new FormData();
+    formData.append("identity_type", data.identity_type);
+    formData.append("document_number", data.document_number);
+    formData.append("id_document", data.id_document);
+
+    const result = await requestJson(`/api/passport/verify/${userId}`, {
+      method: "POST",
+      body: formData,
+    });
+    return result;
+  },
 
   getProofCard: async () => ({
     hustler_name: "Demo Hustler",
@@ -398,15 +342,28 @@ export const api = {
     generated_at: new Date().toISOString(),
   }),
 
-  getTransactions: async (userId = "demo") =>
-    withFallback(async () => {
-      const result = await requestJson(`/api/transactions/user/${userId}`);
-      return Array.isArray(result) ? result : [];
-    }, [
-      { id: 1, type: "deposit", amount: 15000, date: "Today", desc: "Wallet top-up", location: "Lagos" },
-      { id: 2, type: "payment", amount: -3200, date: "Yesterday", desc: "Generator repair payout", location: "Lekki" },
-      { id: 3, type: "deposit", amount: 6000, date: "2 days ago", desc: "Task payout", location: "Yaba" },
-    ]),
+  getTransactions: async (userId = "demo") => {
+    let id = userId;
+    if (id === "demo" && typeof window !== "undefined") {
+      const saved = window.localStorage.getItem("areahustle-demo-user");
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (parsed?.id) id = parsed.id;
+        } catch {}
+      }
+    }
+    const result = await requestJson(`/api/transactions/user/${id}`);
+    return Array.isArray(result) ? result : [];
+  },
+
+  processEscrowIntent: async (data: { gig_id: string; client_id: string; hustler_id: string; amount: number; action: string; currency?: string }) => {
+    const result = await requestJson("/api/transactions/process-intent", {
+      method: "POST",
+      body: JSON.stringify({ ...data, currency: data.currency || "NGN" }),
+    });
+    return result;
+  },
 
   createHustlerProfile: async (data: any) => {
     await wait();
@@ -415,7 +372,9 @@ export const api = {
     return profile;
   },
 
-  getHustlerProfile: async () => ({ ...getLocalProfile() }),
+  getHustlerProfile: async () => {
+    return await api.getMe();
+  },
 
   updateHustlerProfile: async (data: any) => {
     await wait();
@@ -429,31 +388,13 @@ export const api = {
     const lang = (formData?.get("lang") as string | null) || "pcm";
 
     if (!file || !(file instanceof Blob)) {
-      return {
-        category: "General",
-        description: "Need a reliable helper for a quick errand and setup in Lekki Phase 1.",
-        budget: 5000,
-        neighbourhood: "Lekki Phase 1",
-      };
+      throw new Error("No valid audio file provided.");
     }
 
-    try {
-      const result = await voiceApi.transcribeVoiceTask(file as Blob, lang);
-      if (result?.entities) return result.entities;
-      if (result?.category || result?.description || result?.budget || result?.neighbourhood) return result;
-      return {
-        category: "General",
-        description: "Need a reliable helper for a quick errand and setup in Lekki Phase 1.",
-        budget: 5000,
-        neighbourhood: "Lekki Phase 1",
-      };
-    } catch {
-      return {
-        category: "General",
-        description: "Need a reliable helper for a quick errand and setup in Lekki Phase 1.",
-        budget: 5000,
-        neighbourhood: "Lekki Phase 1",
-      };
-    }
+    const result = await voiceApi.transcribeVoiceTask(file as Blob, lang);
+    if (result?.entities) return result.entities;
+    if (result?.category || result?.description || result?.budget || result?.neighbourhood) return result;
+    
+    throw new Error("Failed to parse intent from audio.");
   },
 };
