@@ -9,7 +9,7 @@ import { Plus, CheckCircle, Clock, MapPin, Phone, Edit, X } from "lucide-react";
 import { toast } from "sonner";
 
 export default function CustomerDashboard() {
-  const { isLoggedIn, isLoading: authLoading, userRole, user, updateDemoBalance } = useAuth();
+  const { isLoggedIn, isLoading: authLoading, userRole, user, refreshWallet } = useAuth();
   const [topUpOpen, setTopUpOpen] = useState(false);
   const [topUpAmount, setTopUpAmount] = useState("");
   const [withdrawOpen, setWithdrawOpen] = useState(false);
@@ -23,11 +23,11 @@ export default function CustomerDashboard() {
 
   const walletBalance = user?.wallet_balance || 0;
 
-  const loadJobs = async () => {
-    setIsLoading(true);
+  const loadJobs = async (silent = false) => {
+    if (!silent) setIsLoading(true);
     const jobs = await api.getMyTasks();
     setMyJobs(jobs);
-    setIsLoading(false);
+    if (!silent) setIsLoading(false);
   };
 
   useEffect(() => {
@@ -38,25 +38,40 @@ export default function CustomerDashboard() {
     }
 
     void loadJobs();
+    // Keep the wallet and job list in sync with the server (escrow debits
+    // and hustler status changes happen while this page may be open).
+    void refreshWallet();
+    const jobsTimer = window.setInterval(() => void loadJobs(true), 6000);
+    return () => window.clearInterval(jobsTimer);
   }, [isLoggedIn, userRole, authLoading]);
 
-  const handleTopUp = (e: React.FormEvent) => {
+  const handleTopUp = async (e: React.FormEvent) => {
     e.preventDefault();
     const amt = parseInt(topUpAmount);
     if (amt && amt > 0) {
-      updateDemoBalance("customer", amt);
-      toast.success(`Successfully topped up ${naira(amt)}`);
+      try {
+        if (user?.id) await api.topUpWallet(String(user.id), amt);
+        await refreshWallet();
+        toast.success(`Successfully topped up ${naira(amt)}`);
+      } catch (err: any) {
+        toast.error(err?.message || "Top up failed.");
+      }
       setTopUpOpen(false);
       setTopUpAmount("");
     }
   };
 
-  const handleWithdraw = (e: React.FormEvent) => {
+  const handleWithdraw = async (e: React.FormEvent) => {
     e.preventDefault();
     const amt = parseInt(withdrawAmount);
     if (amt && amt > 0 && amt <= walletBalance) {
-      updateDemoBalance("customer", -amt);
-      toast.success(`Successfully withdrew ${naira(amt)} to bank.`);
+      try {
+        if (user?.id) await api.topUpWallet(String(user.id), -amt);
+        await refreshWallet();
+        toast.success(`Successfully withdrew ${naira(amt)} to bank.`);
+      } catch (err: any) {
+        toast.error(err?.message || "Withdrawal failed.");
+      }
       setWithdrawOpen(false);
       setWithdrawAmount("");
     } else if (amt > walletBalance) {
@@ -68,9 +83,14 @@ export default function CustomerDashboard() {
 
   const handleConfirm = async (id: string) => {
     setConfirmingId(id);
-    await api.completeTask(id);
-    toast.success("Payment released! Escrow funds transferred to Hustler.");
-    await loadJobs();
+    try {
+      await api.completeTask(id);
+      await refreshWallet();
+      toast.success("Payment released! Escrow funds transferred to Hustler.");
+      await loadJobs();
+    } catch (err: any) {
+      toast.error(err?.message || "Could not release payment.");
+    }
     setConfirmingId(null);
   };
 

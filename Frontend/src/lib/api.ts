@@ -239,6 +239,19 @@ export const api = {
     return next;
   },
 
+  getWallet: async (userId: string) => {
+    const result = await requestJson(`/api/users/wallet/${userId}`);
+    return Number(result.wallet_balance || 0);
+  },
+
+  topUpWallet: async (userId: string, amount: number) => {
+    const result = await requestJson(`/api/users/wallet/${userId}/topup`, {
+      method: "POST",
+      body: JSON.stringify({ amount }),
+    });
+    return Number(result.wallet_balance || 0);
+  },
+
   getTasks: async ({ status, neighbourhood }: { status?: string; neighbourhood?: string } = {}) => {
     const params = new URLSearchParams();
     if (status) params.set("status", status);

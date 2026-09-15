@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "@/lib/auth-context";
+import { api } from "@/lib/api";
 import { naira } from "@/lib/format";
 import { Wallet, LogOut, Shield, LayoutDashboard, Briefcase, CreditCard, PlusCircle, User as UserIcon } from "lucide-react";
 import { AnimatedNumber } from "./AnimatedNumber";
@@ -12,7 +13,7 @@ import logo from "@/assets/logo.png";
 import { toast } from "sonner";
 
 export function Navbar() {
-  const { isLoggedIn, userRole, user, logout, updateDemoBalance } = useAuth();
+  const { isLoggedIn, userRole, user, logout, refreshWallet } = useAuth();
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [authOpen, setAuthOpen] = useState(false);
@@ -21,12 +22,17 @@ export function Navbar() {
   const walletBalance = user?.wallet_balance || 0;
   const trustScore = user?.trust_score || 0;
 
-  const handleWithdraw = (e: React.FormEvent) => {
+  const handleWithdraw = async (e: React.FormEvent) => {
     e.preventDefault();
     const amt = parseInt(withdrawAmount);
     if (amt && amt <= walletBalance) {
-      updateDemoBalance(userRole as string, -amt);
-      toast.success(`Successfully withdrew ${naira(amt)} to bank.`);
+      try {
+        if (user?.id) await api.topUpWallet(String(user.id), -amt);
+        await refreshWallet();
+        toast.success(`Successfully withdrew ${naira(amt)} to bank.`);
+      } catch (err: any) {
+        toast.error(err?.message || "Withdrawal failed.");
+      }
       setWithdrawOpen(false);
       setWithdrawAmount("");
     } else {

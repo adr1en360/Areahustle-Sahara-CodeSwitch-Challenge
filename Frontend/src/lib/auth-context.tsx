@@ -18,6 +18,7 @@ type AuthContextType = {
   areas: string[];
   setAreas: (areas: string[]) => void;
   updateDemoBalance: (role: string, amount: number) => void;
+  refreshWallet: () => Promise<void>;
   addDemoTransaction: (txn: any) => void;
   voiceOpen: boolean;
   setVoiceOpen: (open: boolean) => void;
@@ -113,7 +114,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (typeof window !== "undefined") {
       const savedBalance = window.localStorage.getItem(`${role}-wallet`);
       if (savedBalance) balance = Number(savedBalance);
-      else window.localStorage.setItem(`${role}-wallet`, String(balance));
+    }
+    // The server-side wallet is the source of truth once the user exists there.
+    if (authResult?.user_id) {
+      try {
+        const serverBalance = await api.getWallet(authResult.user_id);
+        if (typeof serverBalance === "number" && !Number.isNaN(serverBalance)) balance = serverBalance;
+      } catch {}
+    }
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(`${role}-wallet`, String(balance));
     }
 
     const nextUser = syncDemoState({
@@ -190,6 +200,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
+  const refreshWallet = async () => {
+    if (typeof window === "undefined" || !user?.id) return;
+    try {
+      const balance = await api.getWallet(String(user.id));
+      if (typeof balance !== "number" || Number.isNaN(balance)) return;
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem(`${user.role || "hustler"}-wallet`, String(balance));
+      }
+      setUser((current: any) => (current ? { ...current, wallet_balance: balance } : current));
+    } catch {}
+  };
+
+  // Live wallet: poll the server while logged in so credits and escrow
+  // debits made by the other party show up without a page refresh.
+  useEffect(() => {
+    if (typeof window === "undefined" || !isInitialized) return;
+    if (!token || !user?.id) return;
+    const id = String(user.id);
+    if (!/^[a-f0-9]{24}$/i.test(id)) return; // not a server-backed user
+    const timer = window.setInterval(() => void refreshWallet(), 7000);
+    return () => window.clearInterval(timer);
+  }, [token, user?.id, isInitialized]);
+
   const addDemoTransaction = (txn: any) => {
     refreshUser();
   };
@@ -218,6 +251,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         areas,
         setAreas,
         updateDemoBalance,
+        refreshWallet,
         addDemoTransaction,
         voiceOpen,
         setVoiceOpen,

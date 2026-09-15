@@ -8,7 +8,7 @@ import { MapPin, Lock, Phone, CheckCircle, Search, Mic, X, Loader2 } from "lucid
 import { toast } from "sonner";
 
 function Jobs() {
-  const { isLoggedIn, isLoading: authLoading, userRole, user, updateDemoBalance } = useAuth();
+  const { isLoggedIn, isLoading: authLoading, userRole, user, refreshWallet } = useAuth();
   const [tab, setTab] = useState<"market" | "my-gigs">("market");
   const [keyword, setKeyword] = useState("");
   const [location, setLocation] = useState("");
@@ -60,6 +60,14 @@ function Jobs() {
     setMyGigs(gigs);
   };
 
+  // Live updates: poll the market and my-gigs so status changes made by the
+  // customer (e.g. releasing escrow) arrive without a manual refresh.
+  useEffect(() => {
+    if (authLoading || !isLoggedIn || userRole !== "hustler") return;
+    const timer = window.setInterval(() => void refreshData(), 10000);
+    return () => window.clearInterval(timer);
+  }, [authLoading, isLoggedIn, userRole, location]);
+
   const handleOffer = (e: React.FormEvent, jobId: string) => {
     e.preventDefault();
     e.stopPropagation();
@@ -78,11 +86,9 @@ function Jobs() {
   const handleAccept = async (id: string) => {
     setIsActionLoading(id);
     try {
-      const job = marketJobs.find(j => String(j.id) === String(id));
-      if (job) {
-        updateDemoBalance("customer", -Number(job.budget));
-      }
+      // The backend locks the escrow (debits the customer) at accept time.
       await api.matchTask(id);
+      await refreshWallet();
       toast.success("Job accepted! Contact details unlocked.");
       setTab("my-gigs");
       await refreshData();
@@ -110,7 +116,9 @@ function Jobs() {
     setIsActionLoading(id);
     try {
       await api.completeTask(id);
-      toast.success("Job marked as done! Payment successful!");
+      toast.success("Job marked as done!", {
+        description: "Waiting for the customer to confirm and release payment.",
+      });
       await refreshData();
     } catch (err: any) {
       toast.error(err.message || "Failed to mark job as done.");
