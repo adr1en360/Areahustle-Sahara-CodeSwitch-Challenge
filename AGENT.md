@@ -7,8 +7,9 @@ AreaHustle is a voice-first gig economy & escrow marketplace built for informal 
 
 | Workspace | Purpose |
 |-----------|---------|
-| `Backend/` | FastAPI REST API, Sahara STT sync client, Gemini extraction service, MongoDB persistence, offline benchmark runner |
+| `Backend/` | FastAPI REST API, Sahara STT sync client, Gemini extraction service, MongoDB persistence |
 | `Frontend/` | Next.js 16 app with customer dashboard, hustler job feed, voice terminal, and financial passport (handled by frontend dev) |
+| `benchmarks/` | Colab benchmark notebook, ground-truth dataset, recording guide, and local audio prep helpers |
 | `docs/` | System architecture, complete user stories, job lifecycle, frontend handoff specs, and competition design rationales |
 
 ## Routing Table
@@ -20,11 +21,11 @@ AreaHustle is a voice-first gig economy & escrow marketplace built for informal 
 | Frontend developer integration & contract | `docs/` | `FRONTEND_HANDOFF.md` | — |
 | Backend service logic (Sahara/Gemini/DB) | `Backend/` | `CONTEXT.md` | — |
 | Frontend UI components & pages | `Frontend/` | `CONTEXT.md` | — |
-| Benchmark evaluation (WER/CER vs Whisper) | `Backend/tests/` | `BENCHMARK.md` | `benchmark_runner.py` |
+| Benchmark evaluation (WER/CER vs Whisper & MMS) | `benchmarks/` | `README.md`, `BENCHMARK.md` | `AreaHustle_Benchmark_Colab.ipynb` (runs on Google Colab) |
 | Competition submission & compliance | `./` | `README.md`, `RESPONSIBLE_AI.md` | — |
 
 ## Naming Conventions
-- Voice Audio Samples: `<dialect>_<intent>_<index>.wav` (e.g. `pcm_gen_repair_01.wav`)
+- Voice Audio Samples: `noteNN.wav`, zero-padded (`note01.wav` … `note20.wav`)
 - Backend Services: `<service_name>_client.py` or `<service_name>_extractor.py`
 - Route Handlers: `Backend/routes/<resource>.py`
 - Documentation Specs: `docs/<FEATURE_NAME>.md`

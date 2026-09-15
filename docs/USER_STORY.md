@@ -130,7 +130,7 @@ To ensure maximum judging impact, zero runtime failures during live evaluation, 
 - **Intelligent Gemini Extraction**: Dynamic schema-based extraction parsing messy conversational African speech into rigid database models.
 - **Robust MongoDB Persistence**: All tasks, users, and state transitions persist cleanly in MongoDB.
 - **Dual Voice Endpoints**: Voice-to-task creation (`/api/voice/transcribe`) AND voice-to-search (`/api/voice/search`).
-- **Comprehensive Benchmarking**: Reproducible offline benchmark suite comparing Sahara against OpenAI Whisper on African Pidgin audio with WER, CER, and field accuracy metrics.
+- **Comprehensive Benchmarking**: Reproducible Colab benchmark notebook comparing Sahara against OpenAI Whisper Large-v3 and Meta MMS-1B on African Pidgin audio with WER, CER, and field accuracy metrics.
 - **Clear Frontend Handoff**: Clean documentation allowing frontend engineers to build beautiful, modern UI surfaces without ambiguity.
 
 ### ❌ What We DO NOT WANT (Explicit Exclusions)

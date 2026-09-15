@@ -53,7 +53,7 @@ In African megacities like Lagos, over 80% of urban employment lives in the info
 - **🔍 Hustler Voice Search**: Artisans with busy hands or in loud environments can tap a mic and speak queries (*"Any plumbing work for Yaba?"*) to filter nearby gigs dynamically.
 - **🔒 Zero-Risk Escrow**: Eliminates fraud. Customers lock payment into escrow upon posting; payment is automatically released when the customer inspects and verifies the completed job.
 - **📈 Financial Passport**: Translates daily manual hustle into institutional creditworthiness (Trust Score, completion rates, repeat client metrics).
-- **📊 Multi-Model Offline Benchmark**: Comprehensive evaluation comparing Intron Sahara against OpenAI Whisper on African code-switched audio.
+- **📊 Multi-Model Offline Benchmark**: Evaluation notebook (Google Colab) comparing Intron Sahara against OpenAI Whisper Large-v3 and Meta MMS-1B on African code-switched audio.
 
 ---
 
@@ -61,7 +61,7 @@ In African megacities like Lagos, over 80% of urban employment lives in the info
 
 - **Backend**: Python 3.11+, FastAPI, Motor (Async MongoDB Driver), Pydantic v2
 - **Voice AI**: Intron Health Sahara Voice API (`/file/v1/upload/sync`)
-- **LLM**: Google Gemini (`gemini-2.5-flash` / configurable via `GEMINI_MODEL`)
+- **LLM**: Google Gemini (`gemini-3.5-flash-lite` / configurable via `GEMINI_MODEL`)
 - **Database**: MongoDB Atlas (`areahustle_fintech`)
 - **Audio Pre-processing**: `pydub`, `soundfile`
 - **Frontend**: Next.js 16 (App Router), React 19, Tailwind CSS v4, Lucide Icons
@@ -97,7 +97,7 @@ Edit `.env`:
 ```env
 SAHARA_API_KEY=your_intron_sahara_api_key
 GEMINI_API_KEY=your_gemini_api_key
-GEMINI_MODEL=gemini-2.5-flash
+GEMINI_MODEL=gemini-3.5-flash-lite
 MONGO_URI=mongodb://localhost:27017
 MONGO_DB_NAME=areahustle_fintech
 ```
@@ -112,15 +112,18 @@ API Documentation will be live at `http://localhost:8000/docs`.
 
 ## 🧪 Benchmark Evaluation
 
-We conducted offline evaluations comparing Intron Sahara Voice against OpenAI Whisper on Nigerian Pidgin code-switched audio.
+We evaluated Intron Sahara Voice against OpenAI Whisper Large-v3 and Meta MMS-1B on 20 self-recorded Nigerian Pidgin code-switched clips, measuring WER/CER plus downstream Gemini slot-filling accuracy.
 
-To run the automated benchmark runner:
+The benchmark runs entirely on Google Colab:
 ```bash
-cd Backend/tests
-python benchmark_runner.py
+# locally, only the two prep helpers run:
+cd benchmarks
+python convert_audio.py     # standardize recordings to 16kHz mono WAV
+python compress_audio.py    # validate + zip for upload
 ```
+Then upload `benchmarks/AreaHustle_Benchmark_Colab.ipynb` to [Google Colab](https://colab.research.google.com) with a T4 GPU runtime, drag `audio.zip` into `/content`, and run top to bottom. See [`benchmarks/README.md`](benchmarks/README.md) for the full workflow.
 
-See [BENCHMARK.md](file:///c:/Users/DELL/Documents/Areahustle-Sahara-CodeSwitch-Challenge/BENCHMARK.md) for full methodology, WER/CER tables, and qualitative analysis.
+See [BENCHMARK.md](BENCHMARK.md) for full methodology, WER/CER tables, and qualitative analysis.
 
 ---
 
@@ -131,13 +134,13 @@ AreaHustle was developed with strict ethical and data privacy principles:
 - **In-Memory Audio Processing**: Voice notes are processed in volatile memory and discarded immediately after transcription; no raw voice data is stored on disk or shared with third parties.
 - **Data Minimization**: Personal identifiable information (PII) like phone numbers are held in escrow and revealed only upon mutual job match.
 
-See [RESPONSIBLE_AI.md](file:///c:/Users/DELL/Documents/Areahustle-Sahara-CodeSwitch-Challenge/RESPONSIBLE_AI.md) for our full compliance statement.
+See [RESPONSIBLE_AI.md](RESPONSIBLE_AI.md) for our full compliance statement.
 
 ---
 
 ## 📖 Project Documentation Directory
 
-- [`docs/USER_STORY.md`](file:///c:/Users/DELL/Documents/Areahustle-Sahara-CodeSwitch-Challenge/docs/USER_STORY.md): Complete user personas, journeys, decisions, and product context.
-- [`docs/ARCHITECTURE.md`](file:///c:/Users/DELL/Documents/Areahustle-Sahara-CodeSwitch-Challenge/docs/ARCHITECTURE.md): Deep-dive system architecture, sequence diagrams, and API schemas.
-- [`docs/FRONTEND_HANDOFF.md`](file:///c:/Users/DELL/Documents/Areahustle-Sahara-CodeSwitch-Challenge/docs/FRONTEND_HANDOFF.md): Endpoint contracts and integration guide for frontend engineers.
-- [`AGENT.md`](file:///c:/Users/DELL/Documents/Areahustle-Sahara-CodeSwitch-Challenge/AGENT.md): Routing map for autonomous AI agents.
+- [`docs/USER_STORY.md`](docs/USER_STORY.md): Complete user personas, journeys, decisions, and product context.
+- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md): Deep-dive system architecture, sequence diagrams, and API schemas.
+- [`docs/FRONTEND_HANDOFF.md`](docs/FRONTEND_HANDOFF.md): Endpoint contracts and integration guide for frontend engineers.
+- [`AGENT.md`](AGENT.md): Routing map for autonomous AI agents.
