@@ -92,7 +92,9 @@ export default function PassportPage() {
               <div className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold">Total Wallet Balance</div>
               <div className="font-display font-bold text-base sm:text-lg text-[#0D3B2E]">{naira(user?.wallet_balance || 0)}</div>
             </div>
-            <div className="h-10 w-10 rounded-full bg-[#0D3B2E] text-white flex items-center justify-center font-bold shadow-soft">EA</div>
+            <div className="h-10 w-10 rounded-full bg-[#0D3B2E] text-white flex items-center justify-center font-bold shadow-soft">
+              {user?.name ? user.name.slice(0, 2).toUpperCase() : "AH"}
+            </div>
           </div>
         </div>
       </div>
@@ -323,7 +325,7 @@ export default function PassportPage() {
               <div className="flex justify-between items-center mb-6">
                 <div>
                   <div className="text-xs text-white/50 uppercase tracking-widest font-semibold">Credential Owner</div>
-                  <div className="text-lg font-bold font-display tracking-tight text-white mt-0.5">{proofCard.hustler_name}</div>
+                  <div className="text-lg font-bold font-display tracking-tight text-white mt-0.5">{user?.name || proofCard.hustler_name}</div>
                 </div>
                 <div className="h-8 w-12 rounded bg-gradient-to-r from-yellow-500/80 to-yellow-400/80 border border-white/20 relative overflow-hidden">
                   {/* Holographic Chip Lines */}
@@ -335,7 +337,7 @@ export default function PassportPage() {
               <div className="grid grid-cols-2 gap-y-4 gap-x-6 text-sm">
                 <div>
                   <div className="text-xs text-white/40 uppercase tracking-wider">Hustler ID</div>
-                  <div className="font-mono text-xs font-semibold tracking-wider text-[#10B981] mt-0.5">{proofCard.hustler_id}</div>
+                  <div className="font-mono text-xs font-semibold tracking-wider text-[#10B981] mt-0.5">{user?.id || proofCard.hustler_id}</div>
                 </div>
                 <div>
                   <div className="text-xs text-white/40 uppercase tracking-wider">Tenure</div>
