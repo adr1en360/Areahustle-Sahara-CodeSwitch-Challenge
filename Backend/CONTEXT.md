@@ -8,7 +8,7 @@ The `Backend/` workspace houses the FastAPI application powering AreaHustle. Its
 2. **Speech-to-Text (Intron Sahara)**: Send audio to `https://infer.voice.intron.io/file/v1/upload/sync` with Bearer auth and specified language code (`pcm` default).
 3. **Entity & Intent Extraction (Gemini)**: Pass transcription to Google Gemini with Pydantic JSON schemas to extract structured marketplace parameters (`title`, `category`, `budget`, `neighbourhood`, `description`).
 4. **Marketplace & Database Operations**: Insert jobs, query open gigs with filters, transition task states (`open` -> `matched` -> `in_progress` -> `completed`), and record transactions.
-5. **Model Benchmarking**: Run `tests/benchmark_runner.py` comparing Sahara against OpenAI Whisper and baseline models on WER, CER, and entity recognition.
+5. **Model Benchmarking**: Run the Colab notebook in `../benchmarks/` comparing Sahara against OpenAI Whisper Large-v3 and Meta MMS-1B on WER, CER, and downstream slot-filling accuracy.
 
 ## Files In Here
 - `main.py`: FastAPI application entrypoint, CORS configuration, and router aggregation.
@@ -19,7 +19,8 @@ The `Backend/` workspace houses the FastAPI application powering AreaHustle. Its
 - `routes/tasks.py`: Task CRUD, price negotiation, match, activate, and complete endpoints.
 - `routes/auth.py`, `passport.py`, `transactions.py`, `users.py`: Supporting user, wallet, and passport routes.
 - `agents/`: Legacy Twilio/telephony agents (unmounted in `main.py` to prevent carrier demo failure).
-- `tests/benchmark_runner.py`: STT comparison script computing WER, CER, and field accuracy across models.
+- `tests/check_search_query.py`: Verifies the voice-search Mongo query construction (category/location/budget/keyword clauses) without hitting any API.
+- `tests/test_gemini_extraction.py`: Standalone Gemini extraction demo script (not part of the server).
 
 ## What Good Output Looks Like
 - Clean asynchronous route handlers with explicit Pydantic response models.
