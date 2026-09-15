@@ -11,7 +11,7 @@ type Phase = "idle" | "recording" | "processing" | "result" | "locked";
 type VoiceLanguage = "pcm" | "yo";
 
 export default function PostTask() {
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, isLoading } = useAuth();
   const [phase, setPhase] = useState<Phase>("idle");
   const [manualMode, setManualMode] = useState(false);
   const [voiceResult, setVoiceResult] = useState<any>(null);
@@ -26,10 +26,11 @@ export default function PostTask() {
   const chunksRef = useRef<Blob[]>([]);
 
   useEffect(() => {
+    if (isLoading) return;
     if (!isLoggedIn) {
       window.location.href = "/";
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn, isLoading]);
 
   const createTask = async (data: any) => {
     await api.createTask(data);

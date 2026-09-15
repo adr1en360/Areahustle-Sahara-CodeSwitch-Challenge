@@ -53,7 +53,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<any>(defaultUser);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [language, setLanguage] = useState("English");
   const [areas, setAreas] = useState<string[]>(["Lekki Phase 1", "Yaba"]);
   const [voiceOpen, setVoiceOpen] = useState(false);
@@ -87,6 +87,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(defaultUser);
       }
     }
+    setIsLoading(false);
   }, []);
 
   useEffect(() => {
