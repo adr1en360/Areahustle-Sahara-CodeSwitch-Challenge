@@ -160,7 +160,7 @@ export default function LandingClient() {
           <span className="hidden sm:inline">•</span>
           <span>Gemini Intent Parsing</span>
           <span className="hidden sm:inline">•</span>
-          <span>Paystack Escrow</span>
+          <span>TGIPAY Escrow</span>
           <span className="hidden sm:inline">•</span>
           <span>Flutterwave Sweeps</span>
         </div>

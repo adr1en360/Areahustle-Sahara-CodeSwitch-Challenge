@@ -117,7 +117,7 @@ export function JobSlideOver({
             <div className="text-xs opacity-70 uppercase tracking-widest">Job Budget</div>
             <div className="font-display text-4xl font-bold mt-1">{naira(job.budget)}</div>
             <div className="mt-3 inline-flex items-center gap-1.5 text-xs opacity-80">
-              <Shield className="h-3.5 w-3.5" /> Held in Paystack escrow on accept
+              <Shield className="h-3.5 w-3.5" /> Held in TGIPAY escrow on accept
             </div>
           </div>
 
@@ -163,7 +163,7 @@ export function JobSlideOver({
                   <Shield className="h-5 w-5" />
                 </div>
                 <div className="flex-1">
-                  <div className="text-sm font-semibold text-success">Escrow Secured via Paystack</div>
+                  <div className="text-sm font-semibold text-success">Escrow Secured via TGIPAY</div>
                   <div className="text-xs text-muted-foreground">Funds are locked. You're cleared to start.</div>
                 </div>
                 <Check className="h-4 w-4 text-success" />

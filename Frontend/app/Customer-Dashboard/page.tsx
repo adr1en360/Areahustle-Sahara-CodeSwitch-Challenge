@@ -300,7 +300,7 @@ export default function CustomerDashboard() {
                   disabled={!topUpAmount}
                   className="flex-1 rounded-full bg-primary py-3 text-sm font-semibold text-primary-foreground disabled:opacity-50"
                 >
-                  Paystack Pay
+                  TGIPAY Pay
                 </button>
               </div>
             </form>
