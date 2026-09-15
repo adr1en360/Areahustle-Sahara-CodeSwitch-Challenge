@@ -386,7 +386,9 @@ export const api = {
   },
 
   getHustlerProfile: async () => {
-    return await api.getMe();
+    const me = await api.getMe();
+    const localProfile = getLocalProfile();
+    return { ...me, ...localProfile };
   },
 
   updateHustlerProfile: async (data: any) => {
