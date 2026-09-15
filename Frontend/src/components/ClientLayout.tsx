@@ -16,6 +16,8 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     return <>{children}</>;
   }
 
+  const isDashboard = ["/Customer-Dashboard", "/Jobs", "/Profile", "/Passport", "/Post-Task"].some((p) => pathname?.startsWith(p));
+
   return (
     <>
       <PageLoader />
@@ -23,8 +25,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       <main className="min-h-[calc(100vh-4rem)]">
         {children}
       </main>
-      <Footer />
-      {/* <VoiceTerminal /> */}
+      {!isDashboard && <Footer />}
       <Toaster position="top-right" richColors />
     </>
   );
