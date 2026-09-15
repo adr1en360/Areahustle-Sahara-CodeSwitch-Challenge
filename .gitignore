@@ -1,1 +1,12 @@
 .vscode
+.env
+*.env
+Backend/.env
+Frontend/.env
+__pycache__/
+*.pyc
+node_modules/
+.next/
+dist/
+build/
+.DS_Store
