@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { api, voiceApi } from "@/lib/api";
 import { naira } from "@/lib/format";
-import { MapPin, Lock, Phone, CheckCircle, Search, Mic, X } from "lucide-react";
+import { MapPin, Lock, Phone, CheckCircle, Search, Mic, X, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 function Jobs() {
@@ -22,6 +22,7 @@ function Jobs() {
   const [isActionLoading, setIsActionLoading] = useState<string | null>(null);
   const [voiceFilter, setVoiceFilter] = useState<{ label: string; location: string; keyword: string } | null>(null);
   const [isVoiceSearching, setIsVoiceSearching] = useState(false);
+  const [isVoiceProcessing, setIsVoiceProcessing] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
 
@@ -130,7 +131,8 @@ function Jobs() {
       };
 
       mr.onstop = async () => {
-        setIsVoiceSearching(true);
+        setIsVoiceSearching(false);
+        setIsVoiceProcessing(true);
         const mimeType = mr.mimeType || "audio/webm";
         const audioBlob = new Blob(chunksRef.current, { type: mimeType });
 
@@ -160,7 +162,7 @@ function Jobs() {
           const message = err?.message || "Could not clearly catch that. Please speak closer to the mic or try again.";
           toast.error(message.includes("clearly") ? message : "Could not clearly catch that. Please speak closer to the mic or try again.");
         } finally {
-          setIsVoiceSearching(false);
+          setIsVoiceProcessing(false);
           stream.getTracks().forEach((track) => track.stop());
         }
       };
@@ -476,19 +478,54 @@ function Jobs() {
         </div>
       )}
 
-      <button
-        onClick={() => {
-          if (isVoiceSearching) {
-            stopVoiceSearch();
-            return;
-          }
-          void startVoiceSearch();
-        }}
-        className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-40 bg-voice text-voice-foreground p-4 rounded-full shadow-elevated hover:scale-105 transition disabled:opacity-80"
-        aria-label="Search jobs by voice"
-      >
-        <Mic className={`h-6 w-6 ${isVoiceSearching ? "animate-pulse" : ""}`} />
-      </button>
+      <div className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-40 flex flex-col items-end">
+        {(isVoiceSearching || isVoiceProcessing) && (
+          <div className="mb-4 bg-white rounded-2xl shadow-elevated border px-5 py-3 animate-fade-up origin-bottom-right flex items-center gap-3">
+            <div className="flex items-center gap-1 h-5">
+              {isVoiceProcessing ? (
+                <Loader2 className="h-5 w-5 animate-spin text-[#4F46E5]" />
+              ) : (
+                Array.from({ length: 4 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="w-1 bg-[#4F46E5] rounded-full animate-wave"
+                    style={{
+                      height: "100%",
+                      animationDelay: `${i * 0.15}s`,
+                      animationDuration: "0.8s"
+                    }}
+                  />
+                ))
+              )}
+            </div>
+            <span className="text-sm font-semibold text-[#0D3B2E]">
+              {isVoiceProcessing ? "Processing..." : "Listening..."}
+            </span>
+          </div>
+        )}
+        <button
+          onClick={() => {
+            if (isVoiceProcessing) return;
+            if (isVoiceSearching) {
+              stopVoiceSearch();
+              return;
+            }
+            void startVoiceSearch();
+          }}
+          disabled={isVoiceProcessing}
+          className={`relative group flex items-center justify-center rounded-full p-4 shadow-[0_8px_30px_rgb(79,70,229,0.3)] transition-all duration-300 ${
+            isVoiceSearching 
+              ? "bg-destructive text-destructive-foreground hover:bg-destructive/90 scale-105 shadow-[0_0_20px_rgba(239,68,68,0.5)]" 
+              : "bg-voice text-voice-foreground hover:opacity-95 hover:scale-105"
+          } ${isVoiceProcessing ? "opacity-70 cursor-not-allowed" : ""}`}
+          aria-label="Search jobs by voice"
+        >
+          <Mic className="h-6 w-6 relative z-10" />
+          {isVoiceSearching && (
+            <span className="absolute inset-0 rounded-full border-2 border-white/50 animate-ping" style={{ animationDuration: "1s" }}></span>
+          )}
+        </button>
+      </div>
     </div>
   );
 }
