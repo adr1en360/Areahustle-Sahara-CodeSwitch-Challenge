@@ -249,16 +249,19 @@ export const api = {
 
   getMyTasks: async () => {
     let userId = "demo";
+    let role = "customer";
     if (typeof window !== "undefined") {
       const saved = window.localStorage.getItem("areahustle-demo-user");
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
           if (parsed?.id) userId = parsed.id;
+          if (parsed?.role) role = parsed.role;
         } catch {}
       }
     }
-    const result = await requestJson(`/api/tasks/my?customer_id=${userId}`);
+    const queryParam = role === "hustler" ? `hustler_id=${userId}` : `customer_id=${userId}`;
+    const result = await requestJson(`/api/tasks/my?${queryParam}`);
     return Array.isArray(result) ? result.map(normalizeJob) : [];
   },
 
@@ -290,7 +293,17 @@ export const api = {
   },
 
   matchTask: async (id: string) => {
-    const result = await requestJson(`/api/tasks/${id}/match`, { method: "POST" });
+    let userId = "demo";
+    if (typeof window !== "undefined") {
+      const saved = window.localStorage.getItem("areahustle-demo-user");
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (parsed?.id) userId = parsed.id;
+        } catch {}
+      }
+    }
+    const result = await requestJson(`/api/tasks/${id}/match?hustler_id=${userId}`, { method: "POST" });
     return result;
   },
 
