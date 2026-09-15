@@ -85,6 +85,19 @@ AreaHustle is a voice-first gig marketplace for Lagos informal markets where cus
 **Meta MMS-1B**
 - {{MMS_PATTERN: describe the real behavior observed — repetition loops, character dropping, etc., with one quoted transcript}}
 
+### Case Study: Language-Code Sensitivity (`pcm` vs `yo`)
+
+The quantitative tables above run strictly on Sahara's `pcm` model — the language AreaHustle uses in production. To understand what that choice trades away, we ran a single representative clip (`sample_11`) through Sahara twice, once per language code. Ground truth: *"Welder dey this area? Iron gate hinge don cut for Ojuelegba, 4500 naira dey."*
+
+| Aspect | Sahara `pcm` | Sahara `yo` |
+|---|---|---|
+| Transcript | "Welder dey dis area iron gate in don cut for Uju lego 4500 naira dey" | "Well that day this area, I youngate in done court for ojú ẹlẹ́gba o, 400 naira day" |
+| Trade + code-switched verbs | ✅ preserved ("Welder dey… don cut") | ❌ collapsed to English ("Well that day… done court") |
+| Yoruba-origin place name | ❌ corrupted ("Ojuelegba" → "Uju lego") | ✅ recovered in native orthography ("ojú ẹlẹ́gba") |
+| Budget amount | ✅ exact (4500) | ❌ corrupted to 400 |
+
+The two models fail in complementary ways: `pcm` preserves the code-switched Pidgin and — critically for a transaction platform — the **budget amount**, but phonetically corrupts Yoruba place names; `yo` recovers those place names in native orthography yet wrecks English words and the numeral. Since a wrong budget silently misprices an escrow contract while a wrong neighbourhood merely degrades matching, AreaHustle defaults to `pcm` and exposes `yo` as an explicit user toggle. This asymmetric-failure reasoning is why the quantitative evaluation holds the language code fixed at `pcm` rather than averaging across both.
+
 ### Architectural Conclusion
 
 The measurement validates that Intron Sahara v2.5 is strictly necessary for AreaHustle: general-purpose global models cannot bridge the transcription gap required for autonomous downstream transaction settlement in informal African markets. Per-sample transcripts and full metrics are available in `benchmarks/results.json`.
