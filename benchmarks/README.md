@@ -18,7 +18,7 @@ The notebook never reads the number in a filename. It maps uploaded files to sam
 | `compress_audio.py` | Local zipper | Checks that there are exactly 20 files and that they sort alphabetically in the intended order, asks for confirmation, then writes `audio.zip` for upload to Colab. |
 | `audio/` | The recordings (gitignored) | Friends' voices, deliberately not committed. Currently holds `sample_06.wav` through `sample_20.wav`; samples 01-05 are still being collected. |
 
-Artifacts you bring back from Colab (`results.json`, zipped audio) are also gitignored. The repo carries the notebook, the ground-truth dataset, and the final `BENCHMARK.md` report; the recordings stay private.
+The zip and the recordings stay out of the repo. `results.json` is committed: it is a submission requirement and holds no audio. The repo carries the notebook, the ground-truth dataset, the run's `results.json`, and the final `BENCHMARK.md` report; the recordings stay private.
 
 ## The Three Models
 
@@ -42,13 +42,13 @@ Artifacts you bring back from Colab (`results.json`, zipped audio) are also giti
 
 ## Current Status
 
-- Samples 06-20: recorded, converted, and format-verified (16 kHz / mono / PCM_16, 6-12 s each).
-- Samples 01-05: awaiting recordings. Once they arrive, rerun `convert_audio.py`, then `compress_audio.py`.
+- ✅ **All 20/20 samples collected and standardized**: `sample_01.wav` through `sample_20.wav` are verified in `benchmarks/audio/` (16 kHz / mono / PCM_16, 5–12 s each).
+- ✅ **Colab run complete**: all three models scored on all 20 clips (Sahara `pcm`, Whisper large-v3, MMS-1B `pcm` adapter). Full transcripts and scores are in `results.json`; the numbers are written up in `../BENCHMARK.md`.
 
 ## What Comes Back
 
 - `results.json`: every transcript, slot prediction, and score, per model per sample.
-- Two markdown tables printed in the final cell. Paste them, with the real numbers, into `../BENCHMARK.md`, the template for the 3-page evaluation PDF.
+- Two markdown tables printed in the final cell. The real numbers are already pasted into `../BENCHMARK.md`, the source for the 3-page evaluation PDF.
 
 ## The Two Tiers of Scoring
 

@@ -1,9 +1,7 @@
 # AreaHustle Voice Benchmark Report
 
-> **Status: TEMPLATE — numbers marked `{{...}}` are placeholders.**
-> Run `benchmarks/AreaHustle_Benchmark_Colab.ipynb` on Google Colab, paste the
-> printed tables and the values from `results.json` into this file, then export
-> to PDF (≤ 3 pages) and upload to Google Drive with "Anyone with the link can
+> **Final — all numbers from the completed 20-sample Colab run (`benchmarks/results.json`).**
+> Export to PDF (≤ 3 pages) and upload to Google Drive with "Anyone with the link can
 > view" permissions.
 
 **Evaluation of intra-sentential Nigerian Pidgin–English code-switching for autonomous gig-marketplace transactions · Sahara CodeSwitch Africa Challenge, Track 5**
@@ -28,9 +26,9 @@ AreaHustle is a voice-first gig marketplace for Lagos informal markets where cus
 
 - **Source:** Curated evaluation set of natural artisan dispatch commands in Lagos informal markets (self-recorded; recordings available on request — participant voices are not published in the repo).
 - **Language/Dialect:** Nigerian Pidgin–English (`pcm`) with regional trade vocabulary.
-- **Sample size & duration:** 20 consented recordings; total {{TOTAL_DURATION}} minutes of audio; average clip length {{AVG_DURATION}} seconds.
+- **Sample size & duration:** 20 consented recordings; total 2.8 minutes of audio; average clip length 8.4 seconds.
 - **Audio preprocessing:** Normalized to 16,000 Hz, 16-bit PCM, single-channel mono WAV with peak loudness normalization (automated in-notebook via FFmpeg).
-- **Ground truth:** Verbatim transcripts and target slots (`category`, `location`, `budget_ngn`) per clip — see `benchmarks/dataset.json`.
+- **Ground truth:** Verbatim transcripts and target slots (`category`, `location`, `budget_ngn`) per clip — see `benchmarks/dataset.json`. Samples 01–05 were recorded with natural ad-libbing rather than verbatim script reading; ground-truth transcripts and slot targets were aligned to the actual speech post-hoc.
 
 ---
 
@@ -46,24 +44,24 @@ AreaHustle is a voice-first gig marketplace for Lagos informal markets where cus
 
 | Model | Model Type | Parameters | Dialect | WER (%) | CER (%) |
 |---|---|---|---|---|---|
-| **Intron Sahara v2.5** | Domain-Specific API | Proprietary | `pcm` | **{{SAHARA_WER}}** | **{{SAHARA_CER}}** |
-| **OpenAI Whisper Large-v3** | General Transformer | 1.55B | English decoding | {{WHISPER_WER}} | {{WHISPER_CER}} |
-| **Meta MMS-1B** | Multilingual CTC | 1.0B | `pcm` / `eng` | {{MMS_WER}} | {{MMS_CER}} |
+| **Intron Sahara v2.5** | Domain-Specific API | Proprietary | `pcm` | **33.9** | **18.9** |
+| **OpenAI Whisper Large-v3** | General Transformer | 1.55B | English decoding | 67.6 | 30.2 |
+| **Meta MMS-1B** | Multilingual CTC | 1.0B | `pcm` | 79.9 | 36.2 |
 
 ### Table 2 · Downstream Agentic Task Performance (Gemini Slot-Filling)
 
 | Model Source Transcript | Trade Category Accuracy (%) | Location Accuracy (%) | Budget Extraction (%) | End-to-End Task Success (%) |
 |---|---|---|---|---|
-| **Intron Sahara v2.5** | **{{SAHARA_CAT}}** | **{{SAHARA_LOC}}** | **{{SAHARA_BUD}}** | **{{SAHARA_E2E}}** |
-| **OpenAI Whisper Large-v3** | {{WHISPER_CAT}} | {{WHISPER_LOC}} | {{WHISPER_BUD}} | {{WHISPER_E2E}} |
-| **Meta MMS-1B** | {{MMS_CAT}} | {{MMS_LOC}} | {{MMS_BUD}} | {{MMS_E2E}} |
+| **Intron Sahara v2.5** | **55.0** | **40.0** | **80.0** | **15.0** |
+| **OpenAI Whisper Large-v3** | 80.0 | 20.0 | 80.0 | 20.0 |
+| **Meta MMS-1B** | 60.0 | 30.0 | 50.0 | 5.0 |
 
 ### Quantitative Findings
 
-<!-- After the run, replace with 2-4 bullet findings drawn from the real numbers, e.g. -->
-- {{FINDING_1: e.g. Sahara's WER advantage over the best open-source baseline}}
-- {{FINDING_2: e.g. how end-to-end success degrades faster than WER rises}}
-- {{FINDING_3: e.g. which slot (category/location/budget) fails most for each baseline}}
+- Sahara posts half the transcription error of the best global baseline (WER 33.9% vs 67.6% for Whisper and 79.9% for MMS; CER 18.9% vs 30.2% / 36.2%). The advantage concentrates exactly where AreaHustle needs it: code-switched Pidgin markers and vernacular trade loanwords.
+- Budget extraction is where acoustic error converts directly into money: Sahara and Whisper both land the escrow amount 80% of the time, while MMS's numeral corruption (3500 → "10005 hundred", 9000 → 1000, and a budget of 0 on three clips) drops it to 50%.
+- Whisper posts the highest category accuracy (80% vs Sahara's 55%) despite double the WER: its English-biased output happens to match the target label vocabulary ("carpenter", "electrician"), while Sahara's verbatim Pidgin trade terms ("roof repairer", "refrigerator repairer", "brick layer") fail exact string-match against the ground-truth labels ("Roofer", "Fridge repairer", "Bricklayer"). This is label aliasing rather than acoustic failure — and it is what motivated the canonical category-mapping layer now shipping in the production backend.
+- Location is the weakest slot for every model (Sahara 40%, MMS 30%, Whisper 20%): Yoruba-origin Lagos place names — Ojuelegba, Ilupeju, Ketu, Agege — get phonetically corrupted regardless of model, the failure mode dissected in the case study below. Because end-to-end success requires all three slots to match exactly, per-slot accuracies compound into just 15% joint success for Sahara (Whisper 20%, MMS 5%); at n=20 one clip is five percentage points, so the Sahara–Whisper gap is within noise.
 
 ---
 
@@ -76,14 +74,14 @@ AreaHustle is a voice-first gig marketplace for Lagos informal markets where cus
 
 **Intron Sahara v2.5**
 - Preserved local grammatical particles (*"wey"*, *"fit"*, *"wan"*) and vernacular trade classifications (*"rewinder"*, *"vulcanizer"*), which the downstream parser mapped directly to database fields.
-- {{SAHARA_FAILURE_EXAMPLE: quote a real transcript where Sahara struggled (e.g. background noise), with the ground truth beside it}}
+- Struggles on specialist trade loanwords and truncated numerals: ground truth *"I need rewinder wey go check my pumping machine, my budget na 6k"* came back as *"I need rwanda wey go check my pumping machine my budget na 6"* — "rewinder" → "rwanda" and the budget collapsed from ₦6,000 to ₦6.
 
 **OpenAI Whisper Large-v3**
 - Standard-English bias causes phonetic hallucination over Pidgin markers; when a location entity is corrupted, the downstream agent fails to geo-route the job.
-- {{WHISPER_FAILURE_EXAMPLE: quote a real whisper transcript vs ground truth, e.g. "I dey Ikeja, my brake dey sound" → [actual whisper output]}}
+- Ground truth *"Abeg I dey Ikeja underbridge now, my brake dey sound, I need mechanic for 5k"* came back as *"ID Ikeza under bridge. My break day sound. I need mechanic for 5K."* — every Pidgin marker snapped to its standard-English homophone (*"dey"* → *"day"*, *"brake"* → *"break"*). On sample_11 the same bias escalates into full pseudo-Yoruba hallucination (*"Wè dà dè dì dì sè wè, a yon gè tì ndòn kòt fò o djù e lèk bà wù"*).
 
 **Meta MMS-1B**
-- {{MMS_PATTERN: describe the real behavior observed — repetition loops, character dropping, etc., with one quoted transcript}}
+- Systematic character-level respelling of trade terms (*"mekanik"*, *"plonbar"*, *"briklayer"*), run-on word merges (*"lekeifese"* for "Lekki phase 1"), and numeral corruption severe enough that the budget slot returned 0 on three clips: ground truth *"My kitchen pipe don burst, I need plumber fast fast, I get 5k for hand"* came back as *"my kishing py plone boast i nid plonbar fast-fast i gave five key for hand"*.
 
 ### Case Study: Language-Code Sensitivity (`pcm` vs `yo`)
 
@@ -100,4 +98,4 @@ The two models fail in complementary ways: `pcm` preserves the code-switched Pid
 
 ### Architectural Conclusion
 
-The measurement validates that Intron Sahara v2.5 is strictly necessary for AreaHustle: general-purpose global models cannot bridge the transcription gap required for autonomous downstream transaction settlement in informal African markets. Per-sample transcripts and full metrics are available in `benchmarks/results.json`.
+The acoustic measurements are decisive: Intron Sahara v2.5 halves the transcription error of the best global baseline (WER 33.9% vs 67.6%) and is the only model that preserves code-switched Pidgin markers and trade loanwords verbatim. The downstream tier shows the remaining failures concentrate in two places — specialist trade-label vocabulary and Yoruba-origin place names — and both are addressed in the production backend by the canonical category-mapping layer and the per-language (`pcm`/`yo`) toggle rather than by the ASR model alone. Per-sample transcripts and full metrics are available in `benchmarks/results.json`.

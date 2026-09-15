@@ -5,38 +5,38 @@
     "audio_format": "16000 Hz, 16-bit PCM, mono WAV, peak-normalized",
     "target_slots": ["category", "location", "budget_ngn"],
     "sample_count": 20,
-    "notes": "Source of truth for the ground truth dataset. The Colab notebook (AreaHustle_Benchmark_Colab.ipynb) embeds the same data; if you edit here, mirror the change in the notebook's DATASET cell."
+    "notes": "Source of truth for the ground truth dataset. Samples 01-05 were recorded with natural ad-libbing rather than verbatim script reading; transcripts were aligned to the actual speech post-hoc. The Colab notebook (AreaHustle_Benchmark_Colab.ipynb) embeds the same data; if you edit here, mirror the change in the notebook's DATASET cell."
   },
   "samples": [
     {
       "id": 1,
       "filename": "sample_01.wav",
-      "transcript": "Abeg I dey Ikeja underbridge now, my brake dey sound, I need mechanic for 5k.",
+      "transcript": "I dey Ikeja underbridge, my brake dey sound, I need mechanic for 5k.",
       "target": { "category": "Mechanic", "location": "Ikeja underbridge", "budget_ngn": 5000 }
     },
     {
       "id": 2,
       "filename": "sample_02.wav",
-      "transcript": "My kitchen pipe don burst for Yaba tech side, make plumber come fast fast, I get 4000 naira.",
-      "target": { "category": "Plumber", "location": "Yaba", "budget_ngn": 4000 }
+      "transcript": "My kitchen pipe don burst, I need plumber fast fast, I get 5k for hand.",
+      "target": { "category": "Plumber", "location": "", "budget_ngn": 5000 }
     },
     {
       "id": 3,
       "filename": "sample_03.wav",
-      "transcript": "I need rewinder wey go check my pumping machine for Bariga, my budget na 6k.",
-      "target": { "category": "Rewinder", "location": "Bariga", "budget_ngn": 6000 }
+      "transcript": "I need rewinder wey go check my pumping machine, my budget na 6k.",
+      "target": { "category": "Rewinder", "location": "", "budget_ngn": 6000 }
     },
     {
       "id": 4,
       "filename": "sample_04.wav",
-      "transcript": "Electrician dey around Surulere? Light full house but my breaker dey trip, I go pay 7500.",
-      "target": { "category": "Electrician", "location": "Surulere", "budget_ngn": 7500 }
+      "transcript": "Electrician dey around Surulere? Light dey full house but my breaker dey trip, I get like 5k for hand.",
+      "target": { "category": "Electrician", "location": "Surulere", "budget_ngn": 5000 }
     },
     {
       "id": 5,
       "filename": "sample_05.wav",
-      "transcript": "Who dey do carpentry around Ikorodu garage? My wardrobe door don pull out, 3000 dey ground.",
-      "target": { "category": "Carpenter", "location": "Ikorodu garage", "budget_ngn": 3000 }
+      "transcript": "Who dey do carpentry around Ikorodu garage? My kitchen wardrobe don fall, I get like 5000 naira to give.",
+      "target": { "category": "Carpenter", "location": "Ikorodu garage", "budget_ngn": 5000 }
     },
     {
       "id": 6,
